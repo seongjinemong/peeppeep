@@ -1,14 +1,22 @@
-export type FeedType = {
+export interface CommentType {
+  _id: string
+  userId: string
+  content: string
+  likes: number
+  created_at: string
+}
+
+export interface FeedType {
   id: string
   userId: string
   userName: string
-  title: string
   description: string
+  title: string
   topic: string
   tags: string[]
-  question?: string
-}
-
-export type FeedProps = {
-  feed: Feed
+  question: string
+  image_url: string
+  created_at: string
+  updated_at: string
+  comment: CommentType[]
 }

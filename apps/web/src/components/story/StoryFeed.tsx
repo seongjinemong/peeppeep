@@ -1,13 +1,13 @@
 import { StoryContentType } from '@/types'
 import { useNavigate } from 'react-router-dom'
 
-import CustomIcons from '@components/common/CustomIcons'
+import CustomIcon from '@components/common/CustomIcons'
 
 export function StoryFeed({ content }: { content: StoryContentType }) {
   const navigate = useNavigate()
   return (
     <div
-      className='w-full flex flex-col shrink-0 bg-gray-50 px-2 py-4 shadow-sm rounded-xl overflow-hidden gap-3 hover:bg-background-secondary/10 transition-colors cursor-pointer'
+      className='w-full flex flex-col shrink-0 bg-sky-50 px-4 py-4 shadow-sm rounded-xl overflow-hidden gap-3 hover:bg-background-secondary/10 transition-colors cursor-pointer'
       onClick={() => navigate('/story')}
     >
       <div className='flex justify-between items-start mb-2'>
@@ -21,7 +21,7 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
         </div>
       </div>
 
-      <div className='relative w-full aspect-video rounded-lg overflow-hidden'>
+      <div className='relative w-full aspect-video rounded-lg overflow-hidden flex-1'>
         <div
           style={{ backgroundImage: `url(${content.imageUrl})` }}
           className='absolute inset-0 bg-cover bg-center transition-transform duration-300'
@@ -41,12 +41,19 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
         </div>
 
         <div className='flex items-center gap-3 justify-between'>
-          <div className='flex items-center justify-center w-6 h-6 bg-secondary rounded-full'>
-            <CustomIcons.UserIcon className='w-4 h-4 text-background-primary' />
+          <div className='flex gap-2'>
+            <div className='flex items-center justify-center w-6 h-6 bg-secondary rounded-full'>
+              <CustomIcon
+                name='UserIcon'
+                className='w-4 h-4 text-background-primary'
+              />
+            </div>
+            <span className='text-secondary font-medium'>
+              {content.userName}
+            </span>
           </div>
-          <span className='text-secondary font-medium'>{content.userName}</span>
           <span className='text-secondary font-medium flex items-center gap-1'>
-            <CustomIcons.HeartIcon className='w-4 h-4 text-secondary' />2
+            <CustomIcon name='HeartIcon' className='w-4 h-4 text-secondary' />2
           </span>
         </div>
       </div>

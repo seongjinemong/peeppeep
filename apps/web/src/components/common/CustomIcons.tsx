@@ -3,23 +3,36 @@ import {
   ArrowLeftStartOnRectangleIcon,
   ChevronLeftIcon,
   PlusIcon,
-  HeartIcon
+  HeartIcon,
+  HomeIcon
 } from '@heroicons/react/24/outline'
 
-interface CustomIcons {
-  UserIcon: typeof UserIcon
-  LogoutIcon: typeof ArrowLeftStartOnRectangleIcon
-  ChevronBackIcon: typeof ChevronLeftIcon
-  PlusIcon: typeof PlusIcon
-  HeartIcon: typeof HeartIcon
+type IconName =
+  | 'UserIcon'
+  | 'LogoutIcon'
+  | 'ChevronBackIcon'
+  | 'PlusIcon'
+  | 'HeartIcon'
+  | 'HomeIcon'
+
+interface IconProps {
+  name: IconName
+  className?: string
 }
 
-const CustomIcons: CustomIcons = {
+const IconComponents = {
   UserIcon,
   LogoutIcon: ArrowLeftStartOnRectangleIcon,
   ChevronBackIcon: ChevronLeftIcon,
   PlusIcon,
-  HeartIcon
+  HeartIcon,
+  HomeIcon
 }
 
-export default CustomIcons
+const CustomIcon = ({ name, className = '' }: IconProps) => {
+  const Icon = IconComponents[name]
+  return <Icon className={className} />
+}
+
+export default CustomIcon
+export type { IconName }

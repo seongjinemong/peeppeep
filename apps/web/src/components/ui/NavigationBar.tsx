@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 
 import CustomIcons from '@components/common/CustomIcons'
+import CustomIcon from '@components/common/CustomIcons'
 
 import { Dropdown } from './dropdown/Dropdown'
 
@@ -18,7 +19,10 @@ export function NavigationBar() {
             width='w-48'
             trigger={
               <div className='bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer'>
-                <CustomIcons.UserIcon className='w-6 h-6 text-background-primary' />
+                <CustomIcon
+                  name='UserIcon'
+                  className='w-6 h-6 text-background-primary'
+                />
               </div>
             }
             items={[
@@ -30,7 +34,10 @@ export function NavigationBar() {
                 label: (
                   <div className='flex items-center gap-2 justify-between w-full text-base'>
                     로그아웃
-                    <CustomIcons.LogoutIcon className='w-6 h-6 text-primary' />
+                    <CustomIcon
+                      name='LogoutIcon'
+                      className='w-6 h-6 text-primary'
+                    />
                   </div>
                 ),
                 onClick: () => {}

@@ -9,7 +9,7 @@ import trafilatura
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import os
-
+import uvicorn
 
 load_dotenv()
 
@@ -18,7 +18,8 @@ MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
 client = AsyncIOMotorClient(MONGO_URI)
 db = client[MONGO_DB_NAME]  # MongoDB 데이터베이스 선택
-collection = db['Feed']    # blogs라는 컬렉션 생성
+FeedCollection = db['Feed'] 
+UserCollection = db['User']
 
 app = FastAPI()
 app.add_middleware(
@@ -141,12 +142,16 @@ class FeedResponse(BaseModel):
     message: str
     body: list[dict]
 
-@app.get("/feeds/", response_model=FeedResponse)
+@app.get("/feeds", response_model=FeedResponse)
 async def get_all_feeds():
     try:
-        feeds = await collection.find().sort([('_id', -1)]).to_list(100)  # 최신순으로 100개 조회
-        # 각 피드를 변환하여 _id를 문자열로 변경
+        print('=====get_all_feeds=====')
+        data = await FeedCollection.find().to_list(100)
+        print('=====data=====', data)
+        feeds = await FeedCollection.find().sort([('id', -1)]).to_list(100)  # 최신순으로 100개 조회
+        print('=====feeds=====', feeds)
         feeds = [{**feed, "_id": str(feed["_id"])} for feed in feeds]
+        print('=====changed feeds=====', feeds)
         return FeedResponse(
                 status=200,
                 message="success",
@@ -155,20 +160,26 @@ async def get_all_feeds():
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
+
 class Comment(BaseModel):
-    author: str
+    userId: str
+    userName: str
+    userImageUrl: str
     comment: str
     likes: int
     created_at: str
 
 class Feed(BaseModel):
     id: Optional[ObjectId] = Field(alias="_id", default=None)
+    userId: str
     title: str
     description: str
+    image_url: str
     topic: str
     tags: list[str]
-    question: Optional[str] = None
+    question: Optional[str] = ""
     created_at: str
+    updated_at: str
     comments: list[Comment] = []
 
     class Config:
@@ -209,3 +220,6 @@ async def create_feed(feed: Feed):
 #         return {"message": "Feed deleted successfully"}
 #     except Exception as e:
 #         raise HTTPException(status_code=400, detail=str(e))
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

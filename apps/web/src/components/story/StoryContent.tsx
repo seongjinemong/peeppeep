@@ -2,6 +2,7 @@ import { StoryContentType } from '@/types'
 import { Link, useNavigate } from 'react-router-dom'
 
 import CustomIcons from '@components/common/CustomIcons'
+import CustomIcon from '@components/common/CustomIcons'
 
 function StoryContent({ content }: { content: StoryContentType }) {
   return (
@@ -20,10 +21,15 @@ function StoryContentHeader({ content }: { content: StoryContentType }) {
   return (
     <div className='w-full flex justify-between items-end px-4 h-10 shrink-0'>
       <div className='flex gap-2'>
-        <CustomIcons.ChevronBackIcon
-          className='w-7 h-7 text-secondary cursor-pointer'
+        <div
+          className='flex items-center justify-center'
           onClick={() => navigate(-1)}
-        />
+        >
+          <CustomIcon
+            name='ChevronBackIcon'
+            className='w-7 h-7 text-secondary cursor-pointer'
+          />
+        </div>
         <div className='text-lg text-secondary ml-3'># {content.topic}</div>
       </div>
     </div>
@@ -67,7 +73,10 @@ function StoryContentBottom({ content }: { content: StoryContentType }) {
       <div className='flex-1 flex items-center justify-between px-2 sm:px-4'>
         <div className='flex items-center gap-2'>
           <div className='flex items-center justify-center w-10 h-10 bg-secondary rounded-full'>
-            <CustomIcons.UserIcon className='w-8 h-8 text-background-primary' />
+            <CustomIcon
+              name='UserIcon'
+              className='w-8 h-8 text-background-primary'
+            />
           </div>
           {content.userName}
         </div>
