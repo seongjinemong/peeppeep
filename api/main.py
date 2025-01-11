@@ -1,7 +1,9 @@
+from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseModel
+from bson import ObjectId
+from pydantic import BaseModel, Field
 import json
 import trafilatura
 from openai import AsyncOpenAI
@@ -125,7 +127,7 @@ class FeedResponse(BaseModel):
 @app.get("/feeds/", response_model=FeedResponse)
 async def get_all_feeds():
     try:
-        feeds = await collection.find().to_list(100)  # 최대 100개 조회
+        feeds = await collection.find().sort([('_id', -1)]).to_list(100)  # 최신순으로 100개 조회
         # 각 피드를 변환하여 _id를 문자열로 변경
         feeds = [{**feed, "_id": str(feed["_id"])} for feed in feeds]
         return FeedResponse(
@@ -135,3 +137,58 @@ async def get_all_feeds():
             )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+class Comment(BaseModel):
+    author: str
+    comment: str
+    likes: int
+    created_at: str
+
+class Feed(BaseModel):
+    id: Optional[ObjectId] = Field(alias="_id", default=None)
+    title: str
+    description: str
+    topic: str
+    tags: list[str]
+    question: Optional[str] = None
+    created_at: str
+    comments: list[Comment] = []
+
+    class Config:
+        arbitrary_types_allowed = True
+
+# @app.get("/feed/{feed_id}/comment/", response_model=Comment)
+# async def get_latest_comment(feed_id: str):
+#     try:
+#         feed = await collection.find_one({"_id": ObjectId(feed_id)})
+#         latest_comment = feed["comments"][-1]
+#         return Comment(**latest_comment)
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/feed/", response_model=Feed)
+async def create_feed(feed: Feed):
+    try:
+        feed_dict = feed.model_dump()
+        feed_dict["_id"] = ObjectId()
+        await collection.insert_one(feed_dict)
+        return Feed(**feed_dict)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+# @app.put("/feed/{feed_id}/", response_model=Feed)
+# async def update_feed(feed_id: str, feed: Feed):\]
+#     try:
+#         await collection.update_one({"_id": ObjectId(feed_id)}, {"$set": feed.dict()})
+#         updated_feed = await collection.find_one({"_id": ObjectId(feed_id)})
+#         return Feed(**updated_feed)
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=str(e))
+
+# @app.delete("/feed/{feed_id}/")
+# async def delete_feed(feed_id: str):
+#     try:
+#         await collection.delete_one({"_id": ObjectId(feed_id)})
+#         return {"message": "Feed deleted successfully"}
+#     except Exception as e:
+#         raise HTTPException(status_code=400, detail=str(e))
