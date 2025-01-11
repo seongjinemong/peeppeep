@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-import { getFeedApi } from '@apis/feedApi'
+import { getFeedApi, postFeedAPi } from '@apis/feedApi'
 
 const useGetFeedQuery = ({
   setFeeds
@@ -15,6 +15,15 @@ const useGetFeedQuery = ({
     onSuccess: (data) => {
       console.log('=====getFeedApi=====', data)
       setFeeds(data.body)
+    }
+  })
+}
+
+const usePostFeedQuery = () => {
+  return useMutation({
+    mutationFn: postFeedAPi,
+    onSuccess: (data) => {
+      console.log('=====postFeedAPi=====', data)
     }
   })
 }

@@ -16,10 +16,10 @@ function App() {
   return (
     <GoogleOAuthProvider clientId='638172052069-mn73rt77rrbifi1nerhauor4goti4rqe.apps.googleusercontent.com'>
       <ToastContainer position='bottom-right' />
-      <div className='flex'>
+      <div className='flex relative h-screen w-full'>
         <LeftSidebar />
-        <div className='pt-16 h-screen w-full overflow-y-auto bg-background-gray'>
-          <NavigationBar />
+        <NavigationBar />
+        <div className='pt-16 h-screen w-full pl-64 overflow-y-auto bg-background-gray'>
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='/login' element={<Login />} />

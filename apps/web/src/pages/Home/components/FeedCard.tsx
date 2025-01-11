@@ -6,7 +6,7 @@ import {
   UserCircleIcon,
   HeartIcon
 } from '@heroicons/react/24/outline'
-import React from 'react'
+import React, { useState } from 'react'
 
 const FeedCard = ({ feed }: { feed: FeedType }) => {
   const formatDate = (dateString: string) => {
@@ -16,6 +16,10 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
       month: 'long',
       day: 'numeric'
     }).format(date)
+  }
+  const [isCommentOpen, setIsCommentOpen] = useState(false)
+  const handleCommentClick = () => {
+    setIsCommentOpen(!isCommentOpen)
   }
 
   return (
@@ -39,7 +43,6 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
           </span>
         </div>
 
-        {/* Content */}
         <div className='space-y-3'>
           <h2 className='text-xl font-bold text-gray-900'>{feed.title}</h2>
 
@@ -63,7 +66,6 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
             </div>
           )}
 
-          {/* Tags */}
           <div className='flex flex-wrap gap-2 mt-4'>
             {feed.tags.map((tag, index) => (
               <span
@@ -76,14 +78,16 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
           </div>
         </div>
 
-        {/* Footer - Actions */}
         <div className='flex items-center justify-between mt-6 pt-4 border-t border-gray-100'>
           <div className='flex items-center space-x-4'>
             <button className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'>
               <HeartIcon className='h-5 w-5 mr-1' />
               <span className='text-sm'>좋아요 {0}</span>
             </button>
-            <button className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'>
+            <button
+              onClick={handleCommentClick}
+              className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'
+            >
               <ChatBubbleLeftIcon className='h-5 w-5 mr-1' />
               <span className='text-sm'>댓글 {feed.comment?.length || 0}</span>
             </button>
@@ -104,39 +108,45 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
           </button>
         </div>
 
-        {/* Comments Preview */}
         {feed.comment && feed.comment.length > 0 && (
           <div className='mt-4 pt-4 border-t border-gray-100'>
             <div className='space-y-2'>
-              {feed.comment.slice(0, 2).map((comment) => (
-                <div key={comment._id} className='flex items-start space-x-2'>
-                  <div className='flex-shrink-0'>
-                    <UserCircleIcon className='w-6 h-6 text-gray-400' />
-                  </div>
-                  <div className='flex-1'>
+              <div
+                key={feed.comment[0].userId}
+                className='flex items-start space-x-2'
+              >
+                <div className='flex-shrink-0'>
+                  <UserCircleIcon className='w-6 h-6 text-gray-400' />
+                </div>
+                <div className='flex-1 flex justify-between'>
+                  <div>
                     <div className='flex items-center space-x-2'>
                       <span className='text-sm font-medium'>
-                        {comment.userId}
+                        {feed.comment[0].userId}
                       </span>
                       <span className='text-xs text-gray-500'>
-                        {formatDate(comment.created_at)}
+                        {formatDate(feed.comment[0].created_at)}
                       </span>
                     </div>
-                    <p className='text-sm text-gray-600'>{comment.content}</p>
-                    <div className='flex items-center space-x-2 mt-1'>
-                      <HeartIcon className='w-4 h-4 text-gray-400' />
-                      <span className='text-xs text-gray-500'>
-                        {comment.likes}
-                      </span>
-                    </div>
+                    <p className='text-sm text-gray-600'>
+                      {feed.comment[0].content}
+                    </p>
+                  </div>
+                  <div className='flex items-center space-x-2 mt-1'>
+                    <HeartIcon className='w-4 h-4 text-gray-400' />
+                    <span className='text-xs text-gray-500'>
+                      {feed.comment[0].likedUser.length}
+                    </span>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         )}
       </div>
-      {/* <div className='flex-1 bg-gradient-to-tr from-blue-200 to-blue-300'></div> */}
+      <div
+        className={`flex-1 bg-gradient-to-tr from-blue-200 to-blue-300 w-full overflow-hidden transition-all duration-300 ${isCommentOpen ? 'max-w-full' : 'max-w-0'}`}
+      ></div>
     </div>
   )
 }

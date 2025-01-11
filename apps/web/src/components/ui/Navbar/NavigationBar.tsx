@@ -1,11 +1,26 @@
 import Logo from '@assets/images/icons/Logo.svg?react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import CustomIcon from '@components/common/CustomIcons'
 
+import { Chip } from '../chip/Chips'
 import { Dropdown } from '../dropdown/Dropdown'
 
 export function NavigationBar() {
+  const TagElements = [
+    '전체',
+    '개발 . 프로그래밍',
+    '게임 개발',
+    '데이터 사이언스',
+    '인공지능',
+    '보안 . 네트워크'
+  ]
+  const [selectedTag, setSelectedTag] = useState<string>('전체')
+
+  const handleTagClick = (tag: string) => {
+    setSelectedTag(tag)
+  }
   return (
     <header className='w-full z-50 shrink-0 fixed top-0 left-0 right-0 h-16 bg-background-primary'>
       <nav className='w-full flex items-center justify-between h-full sm:px-10 px-4'>
@@ -47,6 +62,22 @@ export function NavigationBar() {
           />
         </div>
       </nav>
+      {location.pathname === '/main' && (
+        <div className='flex gap-2 w-full absolute top-16 left-64 z-50 py-4 bg-background-primary shadow-inset-b'>
+          <div className='flex gap-2 px-4'>
+            {TagElements.map((tag) => (
+              <Chip
+                size='sm'
+                variant='default'
+                selected={tag === selectedTag}
+                onClick={() => handleTagClick(tag)}
+              >
+                {tag}
+              </Chip>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   )
 }
