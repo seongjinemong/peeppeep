@@ -6,20 +6,23 @@ import {
   UserCircleIcon,
   HeartIcon
 } from '@heroicons/react/24/outline'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import CustomIcon from '@components/common/CustomIcons'
 
 import { formatDate } from '@utils/format'
 
+import CommentList from './CommentList'
+
 const FeedCard = ({ feed }: { feed: FeedType }) => {
   const [isCommentOpen, setIsCommentOpen] = useState(false)
+
   const handleCommentClick = () => {
     setIsCommentOpen(!isCommentOpen)
   }
 
   return (
-    <div className='w-full flex flex-col gap-4 max-w-4xl mx-auto'>
+    <div className='w-full flex flex-col gap-2 max-w-4xl mx-auto mt-4'>
       <div
         className={`w-full flex gap-4 shrink-0 justify-center transition-all duration-1000 h-full`}
       >
@@ -48,18 +51,21 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
 
             {feed.question && (
               <div className='bg-blue-50 p-4 rounded-lg'>
-                <p className='text-blue-800 text-sm'>{feed.question}</p>
+                <p className='text-blue-800 text-base'>{feed.question}</p>
               </div>
             )}
 
-            <p className='text-gray-600 text-sm leading-relaxed'>
+            <p className='text-gray-600 text-base leading-relaxed'>
               {feed.description}
             </p>
 
-            {feed.image_url && (
-              <div className='mt-4'>
+            {feed.imageUrl && (
+              <div
+                className='mt-2 cursor-pointer'
+                onClick={() => window.open(feed.vurl, '_blank')}
+              >
                 <img
-                  src={feed.image_url}
+                  src={feed.imageUrl}
                   alt={feed.title}
                   className='rounded-lg w-full h-48 object-cover'
                 />
@@ -67,12 +73,12 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
             )}
           </div>
 
-          <div className='flex flex-col mt-1 gap-2'>
+          <div className='flex flex-col mt-2 gap-2'>
             <div className='flex flex-wrap gap-2'>
               {feed.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  className='inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800 hover:bg-gray-200'
                 >
                   {tag}
                 </span>
@@ -113,87 +119,6 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
         handleCommentClick={handleCommentClick}
         isCommentOpen={isCommentOpen}
       />
-    </div>
-  )
-}
-function CommentList({
-  handleCommentClick,
-  isCommentOpen,
-  commentList
-}: {
-  handleCommentClick: () => void
-  isCommentOpen: boolean
-  commentList: CommentType[]
-}) {
-  return (
-    <div
-      className={`flex-1 bg-background-primary rounded-lg shadow-sm relative w-full overflow-hidden transition-all duration-300 ${
-        isCommentOpen ? 'max-h-[32rem]' : 'max-h-0'
-      }`}
-    >
-      <div className='w-full h-full flex flex-col p-4'>
-        {/* 댓글 목록 */}
-        <div className='flex-1 overflow-y-auto space-y-4 mb-4'>
-          {commentList.map((comment) => (
-            <div
-              key={comment.userId}
-              className='group hover:bg-gray-50 rounded-lg p-3 transition-colors'
-            >
-              <div className='flex items-start space-x-3'>
-                <div className='flex-shrink-0'>
-                  <div className='w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center'>
-                    <UserCircleIcon className='w-6 h-6 text-gray-500' />
-                  </div>
-                </div>
-                <div className='flex-1 min-w-0'>
-                  <div className='flex items-center justify-between mb-1'>
-                    <div className='flex items-center gap-2'>
-                      <span className='text-sm font-medium text-gray-900'>
-                        {comment.userId}
-                      </span>
-                      <span className='text-xs text-gray-500'>
-                        {formatDate(comment.created_at)}
-                      </span>
-                    </div>
-                    <div className='flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
-                      <button className='text-gray-400 hover:text-gray-600'>
-                        <ChatBubbleLeftIcon className='w-4 h-4' />
-                      </button>
-                      <button className='flex items-center gap-1 text-gray-400 hover:text-rose-500 transition-colors'>
-                        <HeartIcon className='w-4 h-4' />
-                        <span className='text-xs'>
-                          {comment.likedUser.length}
-                        </span>
-                      </button>
-                    </div>
-                  </div>
-                  <p className='text-sm text-gray-600 break-words'>
-                    {comment.content}
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className='border-t border-gray-100 pt-4'>
-          <div className='flex items-center gap-3'>
-            <div className='w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center'>
-              <UserCircleIcon className='w-6 h-6 text-gray-500' />
-            </div>
-            <div className='flex-1 relative'>
-              <input
-                type='text'
-                placeholder='댓글을 입력해주세요'
-                className='w-full py-2 px-4 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all'
-              />
-              <button className='absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600'>
-                <CustomIcon name='SendIcon' className='w-5 h-5' />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

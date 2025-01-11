@@ -146,13 +146,13 @@ async def analyze_blog_content(text: str) -> dict:
                     "properties": {
                         "title": {"type": "string"},
                         "summary": {"type": "string"},
-                        "url": {"type": "string"},
+                        "topic": {"type": "string"},
                         "tags": {
                             "type": "array",
                             "items": {"type": "string"}
                         }
                     },
-                    "required": ["title", "summary", "url", "tags"],
+                    "required": ["title", "summary", "topic", "tags"],
                     "additionalProperties": False
                     }
                 }

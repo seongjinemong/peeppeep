@@ -8,8 +8,17 @@ interface UserStore {
   clearUser: () => void
 }
 
-export const useUserStore = create<UserStore>((set) => ({
-  user: null,
-  setUser: (user: User) => set({ user }),
-  clearUser: () => set({ user: null })
-}))
+export const useUserStore = create<UserStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      setUser: (user: User) => set({ user }),
+      clearUser: () => set({ user: null })
+    }),
+    {
+      name: 'user-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ user: state.user })
+    }
+  )
+)

@@ -2,7 +2,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import { Route, Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 
-import LeftSidebar from '@components/ui/Navbar/LedtSidebar'
+import LeftSidebar from '@components/ui/Navbar/LeftSidebar'
 import { NavigationBar } from '@components/ui/Navbar/NavigationBar'
 
 import { Home } from '@pages/Home'

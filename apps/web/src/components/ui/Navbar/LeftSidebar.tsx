@@ -28,7 +28,7 @@ function LeftSidebar() {
 
   return (
     <div className='md:flex h-screen flex-col fixed left-0 top-0 w-64  shrink-0 border-r bg-background-primary border-border'>
-      <div className='flex pt-16 h-full'>
+      <div className='flex pt-[4.8rem] h-full'>
         <div className='flex flex-col flex-1 justify-between h-full'>
           <div>
             {leftSideElements.map((item) => (

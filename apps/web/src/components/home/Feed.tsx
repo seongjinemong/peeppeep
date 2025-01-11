@@ -6,11 +6,11 @@ import FeedCard from './FeedCard'
 
 // 사용 예시를 위한 데모 컴포넌트
 const Feed = () => {
-  const { feeds, isPending } = useFeedQuery()
+  const { feeds, isGetFeedPending } = useFeedQuery()
 
   return (
     <div className='w-full flex flex-col gap-4'>
-      {isPending ? (
+      {isGetFeedPending ? (
         <div className='w-full h-full flex items-center justify-center'>
           <Spinner />
         </div>

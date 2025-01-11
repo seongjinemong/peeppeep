@@ -1,7 +1,7 @@
-import { FeedType } from '@/types'
+import { FeedType, InputFormData } from '@/types'
 import { useMutation } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { getFeedApi, postFeedAPi, postLinkApi } from '@apis/feedApi'
 
@@ -13,57 +13,52 @@ const useGetFeedQuery = ({
   return useMutation({
     mutationFn: getFeedApi,
     onSuccess: (data) => {
-      console.log('=====getFeedApi=====', data)
       setFeeds(data.body)
+    },
+    onError: (error) => {
+      console.error('getFeed Error:', error)
+      toast.error('게시글 조회 실패')
     }
   })
 }
-
 const usePostFeedQuery = () => {
   return useMutation({
     mutationFn: postFeedAPi,
-    onSuccess: (data) => {
-      console.log('=====postFeedAPi=====', data)
-    }
-  })
-}
-const usePostLinkQuery = ({
-  setAnalyzeForm
-}: {
-  setAnalyzeForm: (feed: FeedType[]) => void
-}) => {
-  return useMutation({
-    mutationFn: postLinkApi,
-    onSuccess: (data) => {
-      console.log('=====postLinkApi=====', data)
+    onSuccess: () => {
+      toast.success('게시글 추가 완료')
+    },
+    onError: () => {
+      toast.error('게시글 추가 실패')
     }
   })
 }
 
 export default function useFeedQuery() {
   const [feeds, setFeeds] = useState<FeedType[]>([])
-  const [analyzeForm, setAnalyzeForm] = useState<FeedType[]>([])
+  const { mutate: postFeed } = usePostFeedQuery()
+  const {
+    mutate: getFeed,
+    isPending: isGetFeedPending,
+    isError: isGetFeedError
+  } = useGetFeedQuery({ setFeeds })
 
-  const { mutate: getFeed, isPending } = useGetFeedQuery({ setFeeds })
-  const { mutate: postLink, isPending: isPostLinkPending } = usePostLinkQuery({
-    setAnalyzeForm
-  })
-
-  const handleGetFeed = async () => {
+  const handleGetFeed = () => {
     getFeed()
   }
-  const handlePostLink = async (link: string) => {
-    postLink(link)
+
+  const handlePostFeed = (feed: InputFormData) => {
+    postFeed(feed)
+    getFeed()
   }
+
   useEffect(() => {
     handleGetFeed()
   }, [])
 
   return {
     feeds,
-    isPending,
-    isPostLinkPending,
-    handlePostLink,
-    analyzeForm
+    isGetFeedPending,
+    isGetFeedError,
+    handlePostFeed
   }
 }

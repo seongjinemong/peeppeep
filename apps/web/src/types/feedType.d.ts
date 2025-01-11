@@ -16,8 +16,21 @@ export interface FeedType {
   likedUser: string[]
   tags: string[]
   question: string
-  image_url: string
+  imageUrl: string
   created_at: string
+  vurl: string
   updated_at: string
   comment: CommentType[]
+}
+
+export interface AnalyzeFormType
+  extends Pick<FeedType, 'description' | 'tags' | 'title' | 'topic'> {}
+
+export interface InputFormData {
+  link: string
+  title: string
+  description: string
+  tags: string[]
+  question: string
+  topic: string
 }

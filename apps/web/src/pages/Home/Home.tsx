@@ -1,6 +1,9 @@
+import { AnalyzeFormType, FeedType } from '@/types/feedType'
 import { tempStoryContent } from '@constants/temp.constant'
 import useModalStore from '@stores/modalStore'
 import { useState } from 'react'
+
+import { postLinkApi } from '@apis/feedApi'
 
 import CustomIcon from '@components/common/CustomIcons'
 import { AddModal } from '@components/home/AddModal'
@@ -16,20 +19,46 @@ const AddLinkModal = () => {
   const [link, setLink] = useState('')
 
   const openModal = useModalStore((s) => s.openModal)
-  const { isPostLinkPending, handlePostLink, analyzeForm } = useFeedQuery()
-  const handleAddLink = () => {
-    handlePostLink(link)
-    openModal({
-      children: isPostLinkPending ? (
-        <div className='flex flex-col items-center justify-center h-full'>
-          <Spinner />
-        </div>
-      ) : (
-        <AddModal analyzeForm={analyzeForm} />
-      ),
-      title: '게시글 추가하기',
-      className: 'max-w-3xl mx-auto w-full h-[80vh]'
-    })
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleAddLink = async () => {
+    try {
+      setIsLoading(true)
+      const res = await postLinkApi(link)
+      console.log(res)
+
+      // res 데이터를 직접 사용
+      openModal({
+        children: (
+          <AddModal
+            isPostLinkPending={isLoading}
+            url={link}
+            analyzeForm={
+              res || {
+                title: '',
+                description: '',
+                tags: [],
+                topic: ''
+              }
+            }
+          />
+        ),
+        title: '게시글 추가하기',
+        className: 'max-w-3xl mx-auto w-full h-[80vh]'
+      })
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className='flex flex-col h-full justify-center items-center w-full gap-1'>
+        <Spinner />
+      </div>
+    )
   }
   return (
     <div className='flex flex-col h-full justify-between items-start pt-16 md:pt-20 w-full gap-1'>
