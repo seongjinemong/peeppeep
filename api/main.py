@@ -349,8 +349,33 @@ class FeedCommentRequest(BaseModel):
 @app.post("/comments/{feed_id}/like", response_model=FeedCommentResponse)
 async def like_comment(feed_id: str, request: FeedCommentRequest):
     try:
-        await FeedCollection.update_one({"_id": ObjectId(feed_id), "comments.commentorId": request.commentorId}, {"$addToSet": {"comments.$.likedUser": request.userId}})
+        await FeedCollection.update_one({"_id": ObjectId(feed_id), "comment.userId": request.commentorId}, {"$addToSet": {"comment.$.likedUser": request.userId}})
         return FeedCommentResponse(
+            status=200,
+            message="success",
+            body="success"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+class AddCommentResponse(BaseModel):
+    status: int
+    message: str
+    body: str
+    
+class AddCommentRequest(BaseModel):
+    userId: str
+    content: str
+    
+@app.post("/comments/{feed_id}/add", response_model=AddCommentResponse)
+async def add_comment(feed_id: str, request: AddCommentRequest):
+    try:
+        comment = request.dict()
+        comment["_id"] = ObjectId()
+        comment["likedUser"] = []
+        comment["created_at"] = {"$date": datetime.utcnow().isoformat() + "Z"}
+        await FeedCollection.update_one({"_id": ObjectId(feed_id)}, {"$addToSet": {"comment": comment}})
+        return AddCommentResponse(
             status=200,
             message="success",
             body="success"
