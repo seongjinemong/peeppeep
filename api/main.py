@@ -16,7 +16,7 @@ MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
 client = AsyncIOMotorClient(MONGO_URI)
 db = client[MONGO_DB_NAME]  # MongoDB 데이터베이스 선택
-collection = db['blogs']    # blogs라는 컬렉션 생성
+collection = db['Feed']    # blogs라는 컬렉션 생성
 
 app = FastAPI()
 app.add_middleware(
@@ -28,14 +28,6 @@ app.add_middleware(
 )
 
 client = AsyncOpenAI()
-
-class BlogRequest(BaseModel):
-    url: str
-
-class BlogResponse(BaseModel):
-    status: int
-    message: str
-    body: dict
 
 def extract_blog_content(url: str) -> str:
     downloaded = trafilatura.fetch_url(url)
@@ -97,6 +89,14 @@ async def analyze_blog_content(text: str) -> dict:
     )
     return response.choices[0].message.content
 
+class BlogRequest(BaseModel):
+    url: str
+
+class BlogResponse(BaseModel):
+    status: int
+    message: str
+    body: dict
+
 @app.post("/analyze-blog/", response_model=BlogResponse)
 async def analyze_blog(request: BlogRequest):
     try:
@@ -105,28 +105,33 @@ async def analyze_blog(request: BlogRequest):
         result_data = json.loads(analysis_result)
 
         # ✅ MongoDB에 데이터 저장
-        insert_result = await collection.insert_one(result_data)
+        # insert_result = await collection.insert_one(result_data)
         
         # ✅ 성공 메시지와 함께 MongoDB의 문서 ID 반환
         return BlogResponse(
             status=200,
             message="success",
-            body={
-                "mongo_id": str(insert_result.inserted_id),
-                **result_data
-            }
+            body=result_data
         )
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
-@app.get("/blogs/", response_model=list[BlogResponse])
-async def get_all_blogs():
-    blogs = await collection.find().to_list(100)  # 최대 100개 조회
-    return [
-        BlogResponse(
-            status=200,
-            message="success",
-            body=blog
-        ) for blog in blogs
-    ]
+
+class FeedResponse(BaseModel):
+    status: int
+    message: str
+    body: list[dict]
+
+@app.get("/feeds/", response_model=FeedResponse)
+async def get_all_feeds():
+    try:
+        feeds = await collection.find().to_list(100)  # 최대 100개 조회
+        # 각 피드를 변환하여 _id를 문자열로 변경
+        feeds = [{**feed, "_id": str(feed["_id"])} for feed in feeds]
+        return FeedResponse(
+                status=200,
+                message="success",
+                body=feeds
+            )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
