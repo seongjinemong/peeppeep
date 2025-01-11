@@ -53,10 +53,8 @@ class MongoDatetime(BaseModel):
 class Comment(BaseModel):
     #id: Optional[ObjectId] = Field(alias="_id", default=None)
     userId: str
-    userName: str
-    userProfileUrl: str
-    comment: str
-    likes: int = 0
+    content: str
+    likedUser: List[str] = []
     created_at: MongoDatetime = Field(default_factory=lambda: MongoDatetime(date=datetime.utcnow()))
 
     class Config:
@@ -80,7 +78,7 @@ class Feed(BaseModel):
     question: Optional[str] = ""
     created_at: MongoDatetime = Field(default_factory=lambda: MongoDatetime(date=datetime.utcnow()))
     updated_at: MongoDatetime = Field(default_factory=lambda: MongoDatetime(date=datetime.utcnow()))
-    comments: List[Comment] = []
+    comment: List[Comment] = []
 
     class Config:
         json_encoders = {
@@ -91,6 +89,7 @@ class Feed(BaseModel):
         
 class FeedwithId(Feed):
     id: Optional[str] = Field(alias="_id", default=None)
+    comment: List[CommentwithId] = []
 
 # API 응답 모델
 class BlogRequest(BaseModel):
@@ -125,12 +124,12 @@ async def analyze_blog_content(text: str) -> dict:
         model="gpt-4o",
         messages=[
             {
-               "role": "system",
+                "role": "system",
                 "content": """블로그 내용에서 제목, 주요 내용, URL, 태그 등을 추출합니다.\n\n
                 # Steps\n
                 1. 제목 추출: 블로그 내용에서 명확한 제목을 찾고, 이를 추출합니다. 20자를 절대 넘어서는 안됩니다.\n
                 2. 주요 내용 식별: 전체 내용을 분석하여 요약해주세요.\n
-               3. topic 찾기: 블로그 내용을 대표할 수 있는 topic을 추출합니다.단, topic은 다음 중 하나여야 합니다. \n React, Vue, Angular, Next.js, TypeScript, JavaScript, HTML/CSS, Tailwind, SASS/SCSS, Redux, Recoil, Zustand, React Query, Webpack, Vite, Node.js, Express, NestJS, Spring, Django, FastAPI, Flask, Laravel, Ruby on Rails, ASP.NET, MySQL, PostgreSQL, MongoDB, Redis, Firebase, Supabase, React Native, Flutter, Swift, Kotlin, iOS, Android, AWS, Docker, Kubernetes, Jenkins, GitHub Actions, Nginx, Linux, Git, GraphQL, WebSocket, REST API, Prisma, Elasticsearch, WebRTC, Jest, Cypress, Vitest, Selenium, Postman, Vercel, Netlify, Heroku, GCP, Azure, BFS, DFS, Dynamic Programming, Greedy, Binary Search, Hash Table, Stack, Queue, Heap, Tree, Graph, Sorting, Two Pointers, Sliding Window, BackTracking, Recursion, Data Structure, Network, Operating System, Database, Computer Architecture, Compiler, Memory Management, Process/Thread, TCP/IP, HTTP, Design Pattern, Agile, Scrum, TDD, DDD, MSA, Clean Code, Refactoring, OOP, Functional Programming, CI/CD, Web Service, Mobile App, Desktop App, Browser Extension, Chat Application, E-commerce, SNS, Game, CMS, Security, Authentication, Authorization, OAuth, JWT, Encryption, HTTPS, SQL Injection, XSS, CSRF, Performance, Caching, Load Balancing, Memory Leak, Browser Rendering, Code Splitting, Lazy Loading, Web Vitals, SEO, Debugging, Error Handling, Logging, Monitoring, Code Review, Documentation, System Design, API Design, UX/UI, Accessibility, Web3, AI/ML, Blockchain, Microservices, Serverless, PWA, WebAssembly, Edge Computing, Cloud Native, IoT\n
+                3. topic 찾기: 블로그 내용을 대표할 수 있는 topic을 추출합니다.단, topic은 다음 중 하나여야 합니다. \n React, Vue, Angular, Next.js, TypeScript, JavaScript, HTML/CSS, Tailwind, SASS/SCSS, Redux, Recoil, Zustand, React Query, Webpack, Vite, Node.js, Express, NestJS, Spring, Django, FastAPI, Flask, Laravel, Ruby on Rails, ASP.NET, MySQL, PostgreSQL, MongoDB, Redis, Firebase, Supabase, React Native, Flutter, Swift, Kotlin, iOS, Android, AWS, Docker, Kubernetes, Jenkins, GitHub Actions, Nginx, Linux, Git, GraphQL, WebSocket, REST API, Prisma, Elasticsearch, WebRTC, Jest, Cypress, Vitest, Selenium, Postman, Vercel, Netlify, Heroku, GCP, Azure, BFS, DFS, Dynamic Programming, Greedy, Binary Search, Hash Table, Stack, Queue, Heap, Tree, Graph, Sorting, Two Pointers, Sliding Window, BackTracking, Recursion, Data Structure, Network, Operating System, Database, Computer Architecture, Compiler, Memory Management, Process/Thread, TCP/IP, HTTP, Design Pattern, Agile, Scrum, TDD, DDD, MSA, Clean Code, Refactoring, OOP, Functional Programming, CI/CD, Web Service, Mobile App, Desktop App, Browser Extension, Chat Application, E-commerce, SNS, Game, CMS, Security, Authentication, Authorization, OAuth, JWT, Encryption, HTTPS, SQL Injection, XSS, CSRF, Performance, Caching, Load Balancing, Memory Leak, Browser Rendering, Code Splitting, Lazy Loading, Web Vitals, SEO, Debugging, Error Handling, Logging, Monitoring, Code Review, Documentation, System Design, API Design, UX/UI, Accessibility, Web3, AI/ML, Blockchain, Microservices, Serverless, PWA, WebAssembly, Edge Computing, Cloud Native, IoT\n
                 4. 태그 추출: 내용 중에서 관련된 주제나 키워드를 기반으로 적절한 태그를 생성합니다."""
             },
             {
@@ -190,14 +189,45 @@ async def get_all_feeds():
             feed["_id"] = str(feed["_id"])
             
             # 댓글의 ObjectId도 변환
-            if "comments" in feed:
-                for comment in feed["comments"]:
+            if "comment" in feed:
+                for comment in feed["comment"]:
                     if "_id" in comment:
                         comment["_id"] = str(comment["_id"])
             
             formatted_feeds.append(feed)
         
         return FeedResponse(
+            status=200,
+            message="success",
+            body=formatted_feeds
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+class FeedFilterRequest(BaseModel):
+    tag: str
+    
+class FeedFilterResponse(BaseModel):
+    status: int
+    message: str
+    body: List[FeedwithId]
+    
+@app.get("/feeds/filtered", response_model=FeedFilterResponse)
+async def get_filtered_feeds(request: FeedFilterRequest):
+    try:
+        feeds = await FeedCollection.find({"tags": request.tag}).sort([('created_at', -1)]).to_list(20)
+        formatted_feeds = []
+        for feed in feeds:
+            feed["_id"] = str(feed["_id"])
+            feed["created_at"] = MongoDatetime(date=feed["created_at"])
+            feed["updated_at"] = MongoDatetime(date=feed["updated_at"])
+            if "comment" in feed:
+                for comment in feed["comment"]:
+                    comment["created_at"] = MongoDatetime(date=comment["created_at"])
+                    comment["_id"] = str(comment["_id"])
+            formatted_feeds.append(feed)
+        print(formatted_feeds,'=====formatted_feeds')
+        return FeedFilterResponse(
             status=200,
             message="success",
             body=formatted_feeds
@@ -238,7 +268,7 @@ async def add_comment(feed_id: str, comment: Comment):
         await FeedCollection.update_one(
             {"_id": ObjectId(feed_id)},
             {
-                "$push": {"comments": comment_dict},
+                "$push": {"comment": comment_dict},
                 "$set": {"updated_at": current_time}
             }
         )
@@ -273,8 +303,8 @@ async def get_feed(id: str):
             feed["updated_at"] = MongoDatetime(date=feed["updated_at"])
 
             # 댓글 처리 (만약 포함된다면)
-            if "comments" in feed:
-                for comment in feed["comments"]:
+            if "comment" in feed:
+                for comment in feed["comment"]:
                     comment["created_at"] = MongoDatetime(date=comment["created_at"])
 
             formatted_feeds.append(feed)
@@ -286,6 +316,47 @@ async def get_feed(id: str):
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
+    
+class FeedLikeResponse(BaseModel):
+    status: int
+    message: str
+    body: str
+    
+class FeedLikeRequest(BaseModel):
+    userId: str
+    
+@app.post("/feeds/{feed_id}/like", response_model=FeedLikeResponse)
+async def like_feed(feed_id: str, request: FeedLikeRequest):
+    try:
+        await FeedCollection.update_one({"_id": ObjectId(feed_id)}, {"$addToSet": {"likedUser": request.userId}})
+        return FeedLikeResponse(
+            status=200,
+            message="success",
+            body="success"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+class FeedCommentResponse(BaseModel):
+    status: int
+    message: str
+    body: str
+    
+class FeedCommentRequest(BaseModel):
+    userId: str
+    commentorId: str
+    
+@app.post("/comments/{feed_id}/like", response_model=FeedCommentResponse)
+async def like_comment(feed_id: str, request: FeedCommentRequest):
+    try:
+        await FeedCollection.update_one({"_id": ObjectId(feed_id), "comments.commentorId": request.commentorId}, {"$addToSet": {"comments.$.likedUser": request.userId}})
+        return FeedCommentResponse(
+            status=200,
+            message="success",
+            body="success"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
