@@ -1,4 +1,4 @@
-export type UserStore = {
+export type User = {
   email: string
   userName: string
   userId: string

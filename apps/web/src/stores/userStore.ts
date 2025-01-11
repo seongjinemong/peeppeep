@@ -1,12 +1,14 @@
-import { UserStore } from '@/types'
+import { User } from '@/types'
 import { create } from 'zustand'
 
+interface UserStore {
+  user: User | null
+  setUser: (user: User) => void
+  clearUser: () => void
+}
+
 export const useUserStore = create<UserStore>((set) => ({
-  email: '',
-  userName: '',
-  userId: '',
-  userProfileURL: '',
-  setUser: (user: UserStore) => set(user),
-  clearUser: () =>
-    set({ email: '', userName: '', userId: '', userProfileURL: '' })
+  user: null,
+  setUser: (user: User) => set({ user }),
+  clearUser: () => set({ user: null })
 }))

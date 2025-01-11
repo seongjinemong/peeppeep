@@ -1,14 +1,37 @@
-import { GoogleLogin } from '@react-oauth/google'
+import { useUserStore } from '@/stores/userStore'
+import { User } from '@/types'
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google'
+import { jwtDecode } from 'jwt-decode'
+import { useNavigate } from 'react-router-dom'
 
 export function Login() {
+  const { setUser } = useUserStore()
+  const navigate = useNavigate()
+
   return (
     <div className='w-full flex justify-center'>
       <div className='w-full max-w-4xl flex flex-col gap-4 p-4 sm:p-6 items-center'>
         <GoogleLogin
-          onSuccess={(credentialResponse) => {
+          onSuccess={(credentialResponse: CredentialResponse) => {
             console.log(credentialResponse)
-            const decodedCredential = atob(credentialResponse.credential)
+
+            const decodedCredential = credentialResponse.credential
+              ? jwtDecode(credentialResponse.credential)
+              : ''
             console.log(decodedCredential)
+
+            const user: User = {
+              email: decodedCredential.email || '',
+              userName: decodedCredential.given_name || '',
+              userId: decodedCredential.sub?.toString() || '',
+              userProfileURL: decodedCredential.picture || ''
+            }
+
+            setUser(user)
+
+            console.log(user)
+
+            navigate('/')
           }}
           onError={() => {
             console.log('Login Failed')
