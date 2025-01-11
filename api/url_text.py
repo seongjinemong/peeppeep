@@ -1,6 +1,9 @@
 import json
 import trafilatura
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 url = 'https://velog.io/@simlin/trafilatura-라이브러리'
 
@@ -33,15 +36,6 @@ response = client.chat.completions.create(
         {
           "type": "text",
           "text": url_text
-        }
-      ]
-    },
-    {
-      "role": "assistant",
-      "content": [
-        {
-          "type": "text",
-          "text": "{\"title\":\"2024년 회고\",\"summary\":\"2024년은 다양한 시도를 하며 성장을 이루었던 해로, 동아리에서 Git, Web 교육 TF 운영, 상반기 백엔드 교육 진행, 코인 마이그레이션 프로젝트 완료와 같은 주요 목표를 달성했습니다. 여러 행사와 프로젝트를 통해 많은 인연을 맺고, 개인적으로도 CS 공부, 운동과 같은 꾸준히 하겠다고 다짐한 일들을 수행했습니다. 개인 성장과 건강을 위한 계획을 세웠고, 2025년에는 신입 개발자로서 적응과 재정을 관리하는 목표를 가지고 있습니다.\",\"url\":\"\",\"tags\":[\"2024년\",\"회고\",\"개발자\",\"목표\",\"교육\",\"프로젝트\",\"동아리\",\"건강\",\"성장\",\"개인 발전\"]}"
         }
       ]
     }
@@ -92,6 +86,9 @@ response = client.chat.completions.create(
   presence_penalty=0
 )
 
-# response를 JSON 문자열로 변환하여 출력
-response_json_string = json.dumps(response.json(), ensure_ascii=False)
-print(response_json_string)
+
+
+# message의 content만 추출
+content_text = response.choices[0].message.content
+# content 출력
+print(content_text)
