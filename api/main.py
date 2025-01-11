@@ -423,5 +423,47 @@ async def add_comment(feed_id: str, request: AddCommentRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
     
+class FeedLikeResponse(BaseModel):
+    status: int
+    message: str
+    body: List[dict]
+
+@app.get("/story", response_model=FeedLikeResponse)
+async def get_story():
+    try:
+        feeds = await FeedCollection.find().sort([("likedUser", -1)]).to_list(100)
+        formatted_feeds = []
+        for feed in feeds:
+            # ObjectId를 문자열로 변환
+            feed["_id"] = str(feed["_id"])
+            
+            # 댓글의 ObjectId도 변환
+            if "comment" in feed:
+                for comment in feed["comment"]:
+                    if "_id" in comment:
+                        comment["_id"] = str(comment["_id"])
+                    
+                    user_info = await UserCollection.find_one({"userId": comment["userId"]})
+                    if user_info:
+                        comment["userInfo"] = user_info
+                        comment["userInfo"]["_id"] = str(user_info["_id"])
+            
+            # userInfo 추가
+            user_info = await UserCollection.find_one({"userId": feed["userId"]})
+            if user_info:
+                feed["userInfo"] = user_info
+                feed["userInfo"]["_id"] = str(user_info["_id"])
+            formatted_feeds.append(feed)
+        
+        return FeedLikeResponse(
+            status=200,
+            message="success",
+            body=formatted_feeds
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+    
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
