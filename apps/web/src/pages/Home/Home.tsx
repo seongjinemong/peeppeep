@@ -2,6 +2,7 @@ import { tempStoryContent } from '@constants/temp.constant'
 import useModalStore from '@stores/modalStore'
 
 import CustomIcons from '@components/common/CustomIcons'
+import CustomIcon from '@components/common/CustomIcons'
 import StoryList from '@components/story/StoryList'
 
 import { Add } from '@pages/Add'

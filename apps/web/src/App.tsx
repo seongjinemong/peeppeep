@@ -47,7 +47,7 @@ function NavItem({ item, isActive, onClick, isOpen }: NavItemProps) {
           'bg-gradient-to-r from-cyan-300/80 to-blue-200/80 text-black font-semibold'
         } mb-1.5 flex items-center gap-4 py-3 px-5 duration-150 cursor-pointer`}
       >
-        <CustomIcon name={item.name} />
+        <CustomIcon className='w-6 h-6' name={item.name} />
         <div className='text-base flex-1'>{item.title}</div>
         {hasChildren && (
           <div className='text-gray-500'>
@@ -94,11 +94,11 @@ const leftSideElements: leftSideElementProps[] = [
 ]
 const leftSideBottomElements: leftSideElementProps[] = [
   {
-    name: 'HomeIcon',
+    name: 'SettingsIcon',
     title: '설정'
   },
   {
-    name: 'HomeIcon',
+    name: 'LogoutIcon',
     title: '로그아웃'
   }
 ]
@@ -124,14 +124,9 @@ function LeftSidebar() {
   }
 
   return (
-    <div className='md:flex hidden h-screen flex-col w-[var(--sidebar-width)] border-r bg-background-primary border-border'>
-      <div className='flex flex-col fixed left-0 bottom-0 right-[calc(100vw-var(--sidebar-width))] top-0'>
-        <div className='flex justify-center items-center h-[var(--topbar-height)]  border-b border-border'>
-          <Link to={'/'} className='text-center text-2xl font-bold'>
-            AICFO
-          </Link>
-        </div>
-        <div className='flex flex-col flex-1 justify-between'>
+    <div className='md:flex h-screen flex-col w-80 border-r bg-background-primary border-border'>
+      <div className='flex pt-16 h-full'>
+        <div className='flex flex-col flex-1 justify-between h-full'>
           <div>
             {leftSideElements.map((item) => (
               <NavItem

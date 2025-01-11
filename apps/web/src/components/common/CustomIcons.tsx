@@ -4,7 +4,8 @@ import {
   ChevronLeftIcon,
   PlusIcon,
   HeartIcon,
-  HomeIcon
+  HomeIcon,
+  CogIcon
 } from '@heroicons/react/24/outline'
 
 type IconName =
@@ -14,6 +15,8 @@ type IconName =
   | 'PlusIcon'
   | 'HeartIcon'
   | 'HomeIcon'
+  | 'SettingsIcon'
+  | 'LogoutIcon'
 
 interface IconProps {
   name: IconName
@@ -26,7 +29,8 @@ const IconComponents = {
   ChevronBackIcon: ChevronLeftIcon,
   PlusIcon,
   HeartIcon,
-  HomeIcon
+  HomeIcon,
+  SettingsIcon: CogIcon
 }
 
 const CustomIcon = ({ name, className = '' }: IconProps) => {
