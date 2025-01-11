@@ -1,3 +1,3 @@
 export function Story() {
-  return <div>Test</div>
+  return <div className='w-full h-full'>Story</div>
 }
