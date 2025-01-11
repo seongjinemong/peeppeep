@@ -7,7 +7,7 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
   const navigate = useNavigate()
   return (
     <div
-      className='w-64 flex flex-col shrink-0 bg-sky-50 px-4 py-4 shadow-sm rounded-xl overflow-hidden gap-3 hover:bg-background-secondary/10 transition-colors cursor-pointer'
+      className='w-64 flex flex-col shrink-0 border border-slate-200 hover:border-slate-400 px-4 py-4 shadow-sm rounded-xl overflow-hidden gap-3 transition-colors cursor-pointer'
       onClick={() => navigate('/story')}
     >
       <div className='flex justify-between items-start mb-2'>
@@ -23,8 +23,16 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
 
       <div className='relative w-full aspect-video rounded-lg overflow-hidden flex-1'>
         <div
-          style={{ backgroundImage: `url(${content.imageUrl})` }}
-          className='absolute inset-0 bg-cover bg-center transition-transform duration-300'
+          style={{
+            backgroundImage: `url(${
+              content.vurl.includes('velog')
+                ? 'https://images.velog.io/images/kim-mg/post/b6928585-e245-4e5f-b878-0bbf278e5886/velog_logo.png'
+                : content.vurl.includes('tistory')
+                  ? 'https://velog.velcdn.com/images%2Fsnoop2head%2Fpost%2F743a1b1a-4273-4f4f-94a5-14b8cf35a23c%2Ftistory.jpeg'
+                  : 'https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg'
+            })`
+          }}
+          className='absolute inset-0 bg-contain bg-center transition-transform duration-300'
         />
       </div>
 

@@ -7,6 +7,7 @@ interface StoryContentType {
   tags: string[]
   question: string
   imageUrl: string
+  vurl: string
 }
 
 export type { StoryContentType }

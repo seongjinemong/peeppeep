@@ -48,8 +48,16 @@ function StoryContentBody({ content }: { content: StoryContentType }) {
       {/* 이미지 영역 - flex-1으로 남은 공간 차지하고 min-h-0으로 줄어들 수 있게 설정 */}
       <div className='w-full flex flex-1 justify-center mb-6 min-h-0'>
         <div
-          style={{ backgroundImage: `url(${content.imageUrl})` }}
-          className='w-full h-full bg-cover bg-center rounded-2xl'
+          style={{ 
+            backgroundImage: `url(${
+              content.vurl.includes('velog') 
+                ? 'https://images.velog.io/images/kim-mg/post/b6928585-e245-4e5f-b878-0bbf278e5886/velog_logo.png' 
+                : content.vurl.includes('tistory') 
+                  ? 'https://velog.velcdn.com/images%2Fsnoop2head%2Fpost%2F743a1b1a-4273-4f4f-94a5-14b8cf35a23c%2Ftistory.jpeg' 
+                  : 'https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg'
+            })` 
+          }}
+          className='w-full h-full bg-contain bg-center rounded-2xl'
         ></div>
       </div>
       {/* 하단 태그와 설명 영역 - shrink-0로 크기 고정 */}

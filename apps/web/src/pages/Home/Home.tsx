@@ -114,6 +114,7 @@ export function Home() {
             </div>
             <StoryList contents={tempStoryContent} />
           </div>
+          <div className='w-full h-px bg-slate-200' />
           <div className='w-full flex flex-col gap-4 py-8'>
             <div className='w-full flex flex-col gap-4'>
               <Feed />
