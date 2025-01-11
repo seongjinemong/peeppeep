@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <h1>FastAPI WebSocket 채팅</h1>
+    <input id="username" placeholder="Enter your name" />
+    <input id="messageInput" placeholder="Type your message here..." />
+    <button onclick="sendMessage()">Send Message</button>
+    <ul id="messages"></ul>
+
+    <script>
+        const usernameInput = document.getElementById('username');
+        const messageInput = document.getElementById('messageInput');
+        const messagesList = document.getElementById('messages');
+        const ws = new WebSocket("ws://127.0.0.1:8000/ws");
+
+        // 메시지 수신 이벤트
+        ws.onmessage = function(event) {
+            const messageElement = document.createElement('li');
+            messageElement.textContent = event.data;
+            messagesList.appendChild(messageElement);
+        };
+
+        // 메시지 전송 함수
+        function sendMessage() {
+            const username = usernameInput.value || "Anonymous";
+            const message = messageInput.value;
+            if (message.trim() !== "") {
+                ws.send(`${username}: ${message}`);
+                messageInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
