@@ -8,7 +8,7 @@ const tempStoryContent: StoryContentType[] = [
     title: 'DFS의 그거에 대해서',
     topic: '알고리즘',
     tags: ['알고리즘', 'DFS', '그거'],
-    question: 'DFS의 그거에 대해서 어떻게 생각하시나요?',
+    question: 'DFS의 그거에 대해서 어떻게 생각하시나요? DFS의 그거에 대해서 어떻게 생각하시나요? DFS의 그거에 대해서 어떻게 생각하시나요?',
     imageUrl:
       'https://bocdn.ecotree.green/blog/0001/01/ad46dbb447cd0e9a6aeecd64cc2bd332b0cbcb79.jpeg?d=1920x1080',
     vurl: 'https://velog.io/@shlee327/스프링-기초와-원리를-알아보자'

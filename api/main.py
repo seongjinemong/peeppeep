@@ -211,6 +211,7 @@ async def get_all_feeds():
                 feed["userInfo"]["_id"] = str(user_info["_id"])
             formatted_feeds.append(feed)
         
+        print(formatted_feeds,'=====formatted_feeds')
         return FeedResponse(
             status=200,
             message="success",

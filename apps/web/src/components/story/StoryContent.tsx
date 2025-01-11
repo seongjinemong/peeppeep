@@ -40,10 +40,10 @@ function StoryContentBody({ content }: { content: StoryContentType }) {
     <div className='w-full flex-1 flex flex-col text-center h-full px-4 overflow-y-hidden'>
       {/* 상단 텍스트 영역 - shrink-0로 크기 고정 */}
       <div className='flex flex-col mt-10 justify-center shrink-0'>
-        <h1 className='text-4xl font-semibold text-secondary mb-4'>
+        <h1 className='text-4xl font-bold text-secondary mb-4'>
           {content.title}
         </h1>
-        <p className='text-2xl text-secondary mb-6'>{content.question}</p>
+        <p className='text-2xl text-secondary mb-6 overflow-hidden whitespace-normal overflow-ellipsis'>{content.question}</p>
       </div>
       {/* 이미지 영역 - flex-1으로 남은 공간 차지하고 min-h-0으로 줄어들 수 있게 설정 */}
       <div className='w-full flex flex-1 justify-center mb-6 min-h-0'>
@@ -57,7 +57,7 @@ function StoryContentBody({ content }: { content: StoryContentType }) {
                   : 'https://img.freepik.com/free-vector/laptop-with-program-code-isometric-icon-software-development-programming-applications-dark-neon_39422-971.jpg'
             })` 
           }}
-          className='w-full h-full bg-contain bg-center rounded-2xl'
+          className='w-full bg-contain bg-center rounded-2xl aspect-square'
         ></div>
       </div>
       {/* 하단 태그와 설명 영역 - shrink-0로 크기 고정 */}
