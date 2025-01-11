@@ -51,7 +51,7 @@ class MongoDatetime(BaseModel):
         raise ValueError('Invalid datetime format')
 
 class Comment(BaseModel):
-    id: Optional[str] = Field(alias="_id", default=None)
+    #id: Optional[ObjectId] = Field(alias="_id", default=None)
     userId: str
     userName: str
     userProfileUrl: str
@@ -65,9 +65,12 @@ class Comment(BaseModel):
             MongoDatetime: lambda v: {'$date': v.date.isoformat() + "Z"},
             datetime: lambda v: v.isoformat() + "Z"
         }
+        
+class CommentwithId(Comment):
+    id: Optional[str] = Field(alias="_id", default=None)
 
 class Feed(BaseModel):
-    id: Optional[str] = Field(alias="_id", default=None)
+    #id: Optional[ObjectId] = Field(alias="_id", default=None)
     userId: str
     title: str
     description: str
@@ -80,12 +83,14 @@ class Feed(BaseModel):
     comments: List[Comment] = []
 
     class Config:
-        allow_population_by_field_name = True
         json_encoders = {
             ObjectId: str,
             MongoDatetime: lambda v: {'$date': v.date.isoformat() + "Z"},
             datetime: lambda v: v.isoformat() + "Z"
         }
+        
+class FeedwithId(Feed):
+    id: Optional[str] = Field(alias="_id", default=None)
 
 # API 응답 모델
 class BlogRequest(BaseModel):
@@ -189,8 +194,13 @@ async def get_all_feeds():
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+class FeedCreateResponse(BaseModel):
+    status: int
+    message: str
+    body: str
 
-@app.post("/feeds", response_model=Feed)
+@app.post("/feeds", response_model=FeedCreateResponse)
 async def create_feed(feed: Feed):
     try:
         current_time = {"$date": datetime.utcnow().isoformat() + "Z"}
@@ -199,9 +209,12 @@ async def create_feed(feed: Feed):
         feed_dict["updated_at"] = current_time
         
         result = await FeedCollection.insert_one(feed_dict)
-        feed_dict["_id"] = result.inserted_id
         
-        return Feed(**feed_dict)
+        return FeedCreateResponse(
+            status=200,
+            message="success",
+            body="success"
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -225,6 +238,42 @@ async def add_comment(feed_id: str, comment: Comment):
             raise HTTPException(status_code=404, detail="Feed not found")
             
         return Feed(**updated_feed)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+class FeedPageResponse(BaseModel):
+    status: int
+    message: str
+    body: List[Feed]
+    
+@app.get("/feeds/{id}", response_model=FeedPageResponse)
+async def get_feed(id: str):
+    try:
+        # MongoDB에서 데이터를 가져옵니다.
+        feeds = await FeedCollection.find({"_id": {"$gt": ObjectId(id)}}).sort("created_at", -1).limit(5).to_list(None)
+
+        # 데이터 변환
+        formatted_feeds = []
+        for feed in feeds:
+            # ObjectId를 문자열로 변환
+            feed["_id"] = str(feed["_id"])
+
+            # MongoDatetime으로 변환
+            feed["created_at"] = MongoDatetime(date=feed["created_at"])
+            feed["updated_at"] = MongoDatetime(date=feed["updated_at"])
+
+            # 댓글 처리 (만약 포함된다면)
+            if "comments" in feed:
+                for comment in feed["comments"]:
+                    comment["created_at"] = MongoDatetime(date=comment["created_at"])
+
+            formatted_feeds.append(feed)
+
+        return FeedPageResponse(
+            status=200,
+            message="success",
+            body=formatted_feeds
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
