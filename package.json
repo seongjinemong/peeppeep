@@ -1,0 +1,26 @@
+{
+  "name": "aicfo2_front",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "web:dev": "pnpm -r -F web dev",
+    "mobile:dev": "pnpm -r -F mobile dev",
+    "web:add": "pnpm -F web add",
+    "mobile:add": "pnpm -F mobile add",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\""
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "peerDependencies": {
+    
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
