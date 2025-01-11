@@ -1,4 +1,7 @@
 import { Feed as FeedType } from '@/types'
+import { tempStoryContent } from '@constants/temp.constant'
+
+import StoryList from '@components/story/StoryList'
 
 import { AddButton, Feed } from './components'
 
@@ -62,7 +65,10 @@ const sampleData: FeedType[] = [
 
 export function Home() {
   return (
-    <div className='w-full flex items-center justify-center'>
+    <div className='w-full flex flex-col items-center justify-center'>
+      <div className='w-full max-w-4xl flex gap-4 h-80'>
+        <StoryList contents={tempStoryContent} />
+      </div>
       <div className='w-full max-w-4xl flex flex-col gap-4'>
         {sampleData.map((item) => (
           <Feed key={item.userId} data={item} />

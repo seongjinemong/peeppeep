@@ -1,2 +1,3 @@
-export * from './Feed'
-export * from './UserStore'
+export * from './userType'
+export * from './feedType'
+export * from './storyType'
