@@ -1,23 +1,41 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 import json
 import trafilatura
-from openai import OpenAI
+from openai import AsyncOpenAI
 from dotenv import load_dotenv
+import os
+
 
 load_dotenv()
 
+MONGO_URI = os.getenv("MONGO_URI")
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
+
+client = AsyncIOMotorClient(MONGO_URI)
+db = client[MONGO_DB_NAME]  # MongoDB 데이터베이스 선택
+collection = db['blogs']    # blogs라는 컬렉션 생성
+
 app = FastAPI()
-client = OpenAI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],  # 모든 메서드 허용 (GET, POST 등)
+    allow_headers=["*"],  # 모든 헤더 허용
+)
+
+client = AsyncOpenAI()
 
 class BlogRequest(BaseModel):
     url: str
 
 class BlogResponse(BaseModel):
-    title: str
-    summary: str
-    url: str
-    tags: list[str]
+    status: int
+    message: str
+    body: dict
 
 def extract_blog_content(url: str) -> str:
     downloaded = trafilatura.fetch_url(url)
@@ -31,8 +49,8 @@ def extract_blog_content(url: str) -> str:
     json_output = json.loads(contents)
     return json_output['text']
 
-def analyze_blog_content(text: str) -> dict:
-    response = client.chat.completions.create(
+async def analyze_blog_content(text: str) -> dict:
+    response = await client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {
@@ -58,22 +76,21 @@ def analyze_blog_content(text: str) -> dict:
             "type": "json_schema",
             "json_schema": {
                 "name": "blog_extraction",
-                "strict": True,
                 "schema": {
-                    "type": "object",
-                    "properties": {
-                        "title": {"type": "string"},
-                        "summary": {"type": "string"},
-                        "url": {"type": "string"},
-                        "tags": {
-                            "type": "array",
-                            "items": {"type": "string"}
-                        }
-                    },
-                    "required": ["title", "summary", "url", "tags"],
-                    "additionalProperties": False
-                }
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string"},
+                    "summary": {"type": "string"},
+                    "url": {"type": "string"},
+                    "tags": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                },
+                "required": ["title", "summary", "url", "tags"],
+                "additionalProperties": False
             }
+        }
         },
         temperature=1,
         max_completion_tokens=2048
@@ -81,16 +98,35 @@ def analyze_blog_content(text: str) -> dict:
     return response.choices[0].message.content
 
 @app.post("/analyze-blog/", response_model=BlogResponse)
-def analyze_blog(request: BlogRequest):
+async def analyze_blog(request: BlogRequest):
     try:
-        # URL에서 내용 추출
         blog_text = extract_blog_content(request.url)
-        
-        # GPT로 분석
-        analysis_result = analyze_blog_content(blog_text)
+        analysis_result = await analyze_blog_content(blog_text)  # ✅ 비동기 호출로 변경
         result_data = json.loads(analysis_result)
+
+        # ✅ MongoDB에 데이터 저장
+        insert_result = await collection.insert_one(result_data)
         
-        return BlogResponse(**result_data)
+        # ✅ 성공 메시지와 함께 MongoDB의 문서 ID 반환
+        return BlogResponse(
+            status=200,
+            message="success",
+            body={
+                "mongo_id": str(insert_result.inserted_id),
+                **result_data
+            }
+        )
     
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+@app.get("/blogs/", response_model=list[BlogResponse])
+async def get_all_blogs():
+    blogs = await collection.find().to_list(100)  # 최대 100개 조회
+    return [
+        BlogResponse(
+            status=200,
+            message="success",
+            body=blog
+        ) for blog in blogs
+    ]
