@@ -42,7 +42,7 @@ export function AddModal({
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     handlePostFeed(formData)
-    console.log(formData)
+    closeModal()
   }
 
   const { closeModal } = useModalStore()

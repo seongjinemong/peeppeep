@@ -10,6 +10,8 @@ import React, { useRef, useState } from 'react'
 
 import CustomIcon from '@components/common/CustomIcons'
 
+import useFeedQuery from '@hooks/queries/useFeedQuery'
+
 import { formatDate } from '@utils/format'
 
 import CommentList from './CommentList'
@@ -20,6 +22,7 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
   const handleCommentClick = () => {
     setIsCommentOpen(!isCommentOpen)
   }
+  const { handlePostFeedLike } = useFeedQuery()
 
   return (
     <div className='w-full flex flex-col gap-2 max-w-4xl mx-auto mt-4'>
@@ -32,11 +35,15 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
           <div className='flex items-center justify-between mb-4'>
             <div className='flex items-center'>
               <div className='w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center'>
-                <UserCircleIcon className='w-8 h-8 text-gray-500' />
+                <img
+                  src={feed.userInfo.userProfileUrl}
+                  alt='user profile'
+                  className='w-full h-full object-cover rounded-full'
+                />
               </div>
               <div className='ml-3'>
                 <h3 className='text-sm font-medium text-gray-900'>
-                  {feed.userName}
+                  {feed.userInfo.userName}
                 </h3>
                 <p className='text-xs text-gray-500'>{feed.topic}</p>
               </div>
@@ -76,9 +83,16 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
 
             <div className='flex flex-1 h-full items-center pt-4 justify-between border-t border-gray-100'>
               <div className='flex items-center space-x-4'>
-                <button className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'>
+                <button
+                  onClick={() => {
+                    handlePostFeedLike(feed._id)
+                  }}
+                  className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'
+                >
                   <HeartIcon className='h-5 w-5 mr-1' />
-                  <span className='text-sm'>좋아요 {0}</span>
+                  <span className='text-sm'>
+                    좋아요 {feed.likedUser ? feed.likedUser.length : 0}
+                  </span>
                 </button>
                 <button
                   onClick={handleCommentClick}
@@ -103,7 +117,9 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
           </div>
         </div>
       </div>
+
       <CommentList
+        feedId={feed._id}
         commentList={feed.comment}
         handleCommentClick={handleCommentClick}
         isCommentOpen={isCommentOpen}

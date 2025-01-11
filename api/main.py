@@ -79,6 +79,7 @@ class Feed(BaseModel):
     description: str
     imageUrl: str
     topic: str
+    vurl: str
     tags: List[str]
     question: Optional[str] = ""
     created_at: MongoDatetime = Field(default_factory=lambda: MongoDatetime(date=datetime.utcnow()))
@@ -272,12 +273,13 @@ class FeedCreateResponse(BaseModel):
 @app.post("/feeds", response_model=FeedCreateResponse)
 async def create_feed(feed: Feed):
     try:
-        current_time = {"$date": datetime.utcnow().isoformat() + "Z"}
+        print(feed)
+        current_time = Field(default_factory=lambda: MongoDatetime(date=datetime.utcnow()))
         feed_dict = feed.dict(by_alias=True)
         feed_dict["created_at"] = current_time
         feed_dict["updated_at"] = current_time
         
-        result = await FeedCollection.insert_one(feed_dict)
+        await FeedCollection.insert_one(feed_dict)
         
         return FeedCreateResponse(
             status=200,

@@ -1,6 +1,7 @@
 import Logo from '@assets/images/icons/Logo.svg?react'
 import useModalStore from '@stores/modalStore'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import { LoginModal } from '@components/common'
 import CustomIcon from '@components/common/CustomIcons'
@@ -21,14 +22,8 @@ export function NavigationBar() {
     '인공지능',
     '보안 . 네트워크'
   ]
-  const {
-    search,
-    handleSearch,
-    tag,
-    handleTagClick,
-    handleSearchInput,
-    searchInput
-  } = useParamsSearch()
+  const { tag, handleTagClick, handleSearchInput, searchInput } =
+    useParamsSearch()
   const { isAuth, handleLogout } = useAuth()
   const { openModal } = useModalStore()
   const openLoginModal = () => {
@@ -39,6 +34,7 @@ export function NavigationBar() {
     })
   }
 
+  const navigate = useNavigate()
   return (
     <header className='w-full z-50 shrink-0 fixed top-0 left-0 right-0 h-16 bg-background-primary'>
       <nav className='w-full flex items-center justify-between h-full sm:px-10 px-4'>
@@ -76,7 +72,9 @@ export function NavigationBar() {
               items={[
                 {
                   label: <div className='text-base'>프로필</div>,
-                  onClick: () => {}
+                  onClick: () => {
+                    navigate('/profile')
+                  }
                 },
                 {
                   label: (

@@ -5,10 +5,13 @@ import useModalStore from '@stores/modalStore'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 
+import useUserQuery from '@hooks/queries/useUserQuery'
+
 export function LoginModal() {
   const { setUser } = useUserStore()
   const navigate = useNavigate()
   const closeModal = useModalStore((s) => s.closeModal)
+  const { handlePostUser } = useUserQuery()
   return (
     <div className='w-full flex justify-center pt-20'>
       <div className='w-full max-w-4xl flex flex-col gap-4 p-4 sm:p-6 items-center'>
@@ -26,11 +29,11 @@ export function LoginModal() {
               email: decodedCredential.email || '',
               userName: decodedCredential.given_name || '',
               userId: decodedCredential.sub?.toString() || '',
-              userProfileURL: decodedCredential.picture || ''
+              userProfileUrl: decodedCredential.picture || ''
             }
 
             setUser(user)
-
+            handlePostUser(user)
             console.log(user)
             closeModal()
             navigate('/')

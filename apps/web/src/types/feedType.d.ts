@@ -1,15 +1,16 @@
 export interface CommentType {
   _id: string
   userId: string
+  userInfo: UserInfo
   content: string
   likedUser: string[]
-  created_at: string
+  created_at: { $date: string }
 }
 
 export interface FeedType {
-  id: string
+  _id: string
   userId: string
-  userName: string
+  userInfo: UserInfo
   description: string
   title: string
   topic: string
@@ -17,9 +18,9 @@ export interface FeedType {
   tags: string[]
   question: string
   imageUrl: string
-  created_at: string
+  created_at: { $date: string }
   vurl: string
-  updated_at: string
+  updated_at: { $date: string }
   comment: CommentType[]
 }
 

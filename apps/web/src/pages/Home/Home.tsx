@@ -1,5 +1,3 @@
-import { AnalyzeFormType, FeedType } from '@/types/feedType'
-import { tempStoryContent } from '@constants/temp.constant'
 import useModalStore from '@stores/modalStore'
 import { useState } from 'react'
 
@@ -104,15 +102,15 @@ export function Home() {
     <div className='w-full flex flex-col items-center justify-center px-2 pt-20 md:px-4'>
       <div className='w-full flex flex-col'>
         <div className='w-full flex flex-col gap-4 mx-auto'>
-          <div className='w-full'>
-            <div className='flex gap-4 pl-4 py-4 items-end'>
+          <div className='w-full max-w-7xl mx-auto'>
+            <div className='flex gap-4 py-4 items-end'>
               {/* <div className='w-8 h-10 bg-blue-300'></div> */}
               <h3 className='text-3xl font-semibold'>스토리</h3>
               <p className='text-tertiary'>
                 # 따끈따끈한 최신 블로그들을 확인해보세요
               </p>
             </div>
-            <StoryList contents={tempStoryContent} />
+            <StoryList />
           </div>
           <div className='w-full h-px bg-slate-200' />
           <div className='w-full flex flex-col gap-4 py-8'>

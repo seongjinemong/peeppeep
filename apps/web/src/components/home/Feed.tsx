@@ -15,7 +15,7 @@ const Feed = () => {
           <Spinner />
         </div>
       ) : (
-        feeds.map((item) => <FeedCard key={item.id} feed={item} />)
+        feeds.map((item) => <FeedCard key={item._id} feed={item} />)
       )}
     </div>
   )

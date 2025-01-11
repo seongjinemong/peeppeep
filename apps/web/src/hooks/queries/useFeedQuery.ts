@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
+import { postFeedLikeApi } from '@apis/commentApi'
 import { getFeedApi, postFeedAPi, postLinkApi } from '@apis/feedApi'
 
 const useGetFeedQuery = ({
@@ -34,6 +35,18 @@ const usePostFeedQuery = () => {
   })
 }
 
+const usePostFeedLikeQuery = () => {
+  return useMutation({
+    mutationFn: postFeedLikeApi,
+    onSuccess: () => {
+      toast.success('게시글 좋아요 완료')
+    },
+    onError: () => {
+      toast.error('게시글 좋아요 실패')
+    }
+  })
+}
+
 export default function useFeedQuery() {
   const [feeds, setFeeds] = useState<FeedType[]>([])
   const { mutate: postFeed } = usePostFeedQuery()
@@ -49,17 +62,23 @@ export default function useFeedQuery() {
   const user = useUserStore((s) => s.user)
   const handlePostFeed = (feed: InputFormData) => {
     postFeed({ ...feed, userId: user?.userId || '' })
-    getFeed()
   }
 
   useEffect(() => {
     handleGetFeed()
   }, [])
 
+  const { mutate: postFeedLike } = usePostFeedLikeQuery()
+  const handlePostFeedLike = (feedId: string) => {
+    postFeedLike({ userId: user?.userId || '', feedId })
+  }
+
   return {
+    handleGetFeed,
     feeds,
     isGetFeedPending,
     isGetFeedError,
-    handlePostFeed
+    handlePostFeed,
+    handlePostFeedLike
   }
 }

@@ -1,4 +1,5 @@
 interface StoryContentType {
+  _id: string
   userId: string
   userName: string
   description: string

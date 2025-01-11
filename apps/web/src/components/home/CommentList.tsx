@@ -1,25 +1,34 @@
 import { CommentType } from '@/types'
 import { HeartIcon, UserCircleIcon } from '@heroicons/react/16/solid'
+import { useState } from 'react'
 
 import CustomIcon from '@components/common/CustomIcons'
 
+import useCommentQuery from '@hooks/queries/useCommentQuery'
+import useFeedQuery from '@hooks/queries/useFeedQuery'
 import { useAuth } from '@hooks/useAuth'
 
 import { formatDate } from '@utils/format'
 
 export default function CommentList({
   handleCommentClick,
+  feedId,
   isCommentOpen,
   commentList
 }: {
+  feedId: string
   handleCommentClick: () => void
   isCommentOpen: boolean
   commentList: CommentType[]
 }) {
+  console.log(feedId)
+  const { handlePostComment } = useCommentQuery()
+  const [commentInput, setCommentInput] = useState('')
   const { user } = useAuth()
+  const { handlePostCommentLike } = useCommentQuery()
   return (
     <div
-      className={`flex-1 bg-background-primary rounded-lg shadow-sm relative w-full overflow-hidden transition-all duration-300 ${
+      className={`flex-1 bg-background-primary space-y-2 rounded-lg shadow-sm relative w-full overflow-hidden transition-all duration-300 ${
         isCommentOpen ? 'max-h-[32rem]' : 'max-h-0'
       }`}
     >
@@ -34,7 +43,11 @@ export default function CommentList({
                 <div className='flex items-start space-x-3'>
                   <div className='flex-shrink-0'>
                     <div className='w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center'>
-                      <UserCircleIcon className='w-6 h-6 text-gray-500' />
+                      <img
+                        src={comment.userInfo.userProfileUrl}
+                        alt='user profile'
+                        className='w-full h-full object-cover rounded-full'
+                      />
                     </div>
                   </div>
                   <div className='flex-1'>
@@ -49,6 +62,13 @@ export default function CommentList({
                       </div>
                       <div className='flex items-center'>
                         <button
+                          onClick={() => {
+                            handlePostCommentLike({
+                              feedId: feedId,
+                              userId: user?.userId || '',
+                              commentorId: comment.userId
+                            })
+                          }}
                           className={`flex items-center gap-1 transition-colors`}
                         >
                           <CustomIcon
@@ -73,44 +93,73 @@ export default function CommentList({
               </div>
             ))}
           </div>
-
           <div className='border-t border-gray-100 flex items-center py-2 shrink-0'>
             <div className='flex items-center gap-3 w-full'>
               <div className='w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center'>
                 <UserCircleIcon className='w-6 h-6 text-gray-500' />
               </div>
               <div className='flex-1 relative'>
-                <input
-                  type='text'
-                  placeholder='댓글을 입력해주세요'
-                  className='w-full py-2 px-4 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all'
-                />
-                <button className='absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600'>
-                  <CustomIcon name='SendIcon' className='w-5 h-5' />
-                </button>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    handlePostComment({
+                      feed_id: feedId,
+                      comment: {
+                        userId: user?.userId || '',
+                        content: commentInput
+                      }
+                    })
+                  }}
+                >
+                  <input
+                    type='text'
+                    value={commentInput}
+                    onChange={(e) => setCommentInput(e.target.value)}
+                    placeholder='댓글을 입력해주세요'
+                    className='w-full py-2 px-4 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all'
+                  />
+                  <button className='absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600'>
+                    <CustomIcon name='SendIcon' className='w-5 h-5' />
+                  </button>
+                </form>
               </div>
             </div>
           </div>
         </div>
       ) : (
-        <div className='w-full h-full flex items-center justify-center'>
-          <p className='text-gray-500 text-sm'>
+        <div className='w-full space-y-2 py-4 px-8 h-full flex flex-col items-center justify-center'>
+          <p className='text-gray-500 text-sm flex-1 w-full'>
             답변이 없습니다. 등록해보세요!
           </p>
-          <div className='border-t border-gray-100 pt-4'>
+          <div className='w-full'>
             <div className='flex items-center gap-3'>
               <div className='w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center'>
                 <UserCircleIcon className='w-6 h-6 text-gray-500' />
               </div>
               <div className='flex-1 relative'>
-                <input
-                  type='text'
-                  placeholder='댓글을 입력해주세요'
-                  className='w-full py-2 px-4 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all'
-                />
-                <button className='absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600'>
-                  <CustomIcon name='SendIcon' className='w-5 h-5' />
-                </button>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    handlePostComment({
+                      feed_id: feedId,
+                      comment: {
+                        userId: user?.userId || '',
+                        content: commentInput
+                      }
+                    })
+                  }}
+                >
+                  <input
+                    type='text'
+                    value={commentInput}
+                    onChange={(e) => setCommentInput(e.target.value)}
+                    placeholder='댓글을 입력해주세요'
+                    className='w-full py-2 px-4 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all'
+                  />
+                  <button className='absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-600'>
+                    <CustomIcon name='SendIcon' className='w-5 h-5' />
+                  </button>
+                </form>
               </div>
             </div>
           </div>

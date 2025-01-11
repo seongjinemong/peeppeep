@@ -6,7 +6,6 @@ import LeftSidebar from '@components/ui/Navbar/LeftSidebar'
 import { NavigationBar } from '@components/ui/Navbar/NavigationBar'
 
 import { Home } from '@pages/Home'
-import { Login } from '@pages/Login'
 import { Story } from '@pages/Story'
 
 import { ModalPortal } from '@utils/helper'
