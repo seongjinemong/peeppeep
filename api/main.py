@@ -33,6 +33,11 @@ app.add_middleware(
 
 client = AsyncOpenAI()
 
+class User(BaseModel):
+    userId: str
+    userName: str
+    userProfileUrl: str
+
 # MongoDB의 날짜 형식을 처리하기 위한 기본 모델
 class MongoDatetime(BaseModel):
     """MongoDB의 $date 형식을 처리하기 위한 커스텀 모델"""
@@ -193,7 +198,17 @@ async def get_all_feeds():
                 for comment in feed["comment"]:
                     if "_id" in comment:
                         comment["_id"] = str(comment["_id"])
+                    
+                    user_info = await UserCollection.find_one({"userId": comment["userId"]})
+                    if user_info:
+                        comment["userInfo"] = user_info
+                        comment["userInfo"]["_id"] = str(user_info["_id"])
             
+            # userInfo 추가
+            user_info = await UserCollection.find_one({"userId": feed["userId"]})
+            if user_info:
+                feed["userInfo"] = user_info
+                feed["userInfo"]["_id"] = str(user_info["_id"])
             formatted_feeds.append(feed)
         
         return FeedResponse(
@@ -210,7 +225,7 @@ class FeedFilterRequest(BaseModel):
 class FeedFilterResponse(BaseModel):
     status: int
     message: str
-    body: List[FeedwithId]
+    body: List[dict]
     
 @app.get("/feeds/filtered", response_model=FeedFilterResponse)
 async def get_filtered_feeds(request: FeedFilterRequest):
@@ -225,6 +240,19 @@ async def get_filtered_feeds(request: FeedFilterRequest):
                 for comment in feed["comment"]:
                     comment["created_at"] = MongoDatetime(date=comment["created_at"])
                     comment["_id"] = str(comment["_id"])
+                    
+                    # userInfo 추가
+                    user_info = await UserCollection.find_one({"userId": comment["userId"]})
+                    if user_info:
+                        comment["userInfo"] = user_info
+                        comment["userInfo"]["_id"] = str(user_info["_id"])
+            
+            # userInfo 추가
+            user_info = await UserCollection.find_one({"userId": feed["userId"]})
+            if user_info:
+                feed["userInfo"] = user_info
+                feed["userInfo"]["_id"] = str(user_info["_id"])
+            
             formatted_feeds.append(feed)
         print(formatted_feeds,'=====formatted_feeds')
         return FeedFilterResponse(
@@ -284,7 +312,7 @@ async def add_comment(feed_id: str, comment: Comment):
 class FeedPageResponse(BaseModel):
     status: int
     message: str
-    body: List[Feed]
+    body: List[dict]
     
 @app.get("/feeds/{id}", response_model=FeedPageResponse)
 async def get_feed(id: str):
@@ -306,7 +334,19 @@ async def get_feed(id: str):
             if "comment" in feed:
                 for comment in feed["comment"]:
                     comment["created_at"] = MongoDatetime(date=comment["created_at"])
-
+                    
+                    user_info = await UserCollection.find_one({"userId": comment["userId"]})
+                    if user_info:
+                        comment["userInfo"] = user_info
+                        comment["userInfo"]["_id"] = str(user_info["_id"])
+                    
+            
+            # userInfo 추가
+            user_info = await UserCollection.find_one({"userId": feed["userId"]})
+            if user_info:
+                feed["userInfo"] = user_info
+                feed["userInfo"]["_id"] = str(user_info["_id"])
+                
             formatted_feeds.append(feed)
 
         return FeedPageResponse(
