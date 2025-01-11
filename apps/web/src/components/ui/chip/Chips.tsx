@@ -22,12 +22,12 @@ export function Chip({
   const variantStyles = {
     default: 'bg-background-primary border border-border',
     outlined: 'border border-border hover:bg-background-gray',
-    filled: 'bg-aicfo text-white hover:bg-aicfo-accent'
+    filled: 'bg-secondary text-background-primary hover:bg-primary'
   }
 
   const sizeStyles = {
     xs: 'md:px-2 px-1 md:py-1.5 py-1 text-xs md:text-sm text-secondary',
-    sm: 'md:px-3 px-1.5 md:py-2 py-1 text-sm md:text-base text-secondary',
+    sm: 'md:px-4 px-2 md:py-1.5 py-1 text-sm md:text-lg ',
     md: 'md:px-4 px-2 md:py-3 py-2 text-base md:text-lg text-secondary',
     lg: 'px-6 py-3 text-lg'
   }
@@ -35,10 +35,10 @@ export function Chip({
   return (
     <div
       className={cn(
-        'rounded-3xl inline-flex items-center justify-center gap-2 cursor-pointer',
+        'rounded-xl inline-flex items-center justify-center gap-2 cursor-pointer',
         variantStyles[variant],
         sizeStyles[size],
-        selected && 'ring ring-blue-300',
+        selected && 'bg-primary text-background-primary',
         disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
         className
       )}

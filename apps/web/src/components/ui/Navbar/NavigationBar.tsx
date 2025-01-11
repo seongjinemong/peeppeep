@@ -1,17 +1,18 @@
+import Logo from '@assets/images/icons/Logo.svg?react'
 import { Link } from 'react-router-dom'
 
-import CustomIcons from '@components/common/CustomIcons'
 import CustomIcon from '@components/common/CustomIcons'
 
-import { Dropdown } from './dropdown/Dropdown'
+import { Dropdown } from '../dropdown/Dropdown'
 
 export function NavigationBar() {
   return (
-    <header className='w-full z-50 shrink-0 fixed top-0 left-0 right-0 h-16 bg-background-primary shadow-sm'>
-      <nav className='max-w-6xl mx-auto w-full flex items-center justify-between h-full sm:px-4 px-6'>
-        <div className='flex items-center gap-4'>
-          <Link to='/' className='text-2xl font-bold'>
-            <div>Logo</div>
+    <header className='w-full z-50 shrink-0 fixed top-0 left-0 right-0 h-16 bg-background-primary'>
+      <nav className='w-full flex items-center justify-between h-full sm:px-10 px-4'>
+        <div className='flex items-center gap-5 h-full mt-1'>
+          <CustomIcon name='MenuIcon' className='w-8 h-8' />
+          <Link to='/' className='text-2xl font-bold flex items-end gap-2 mt-1'>
+            <Logo className='w-8 h-8' /> <p className=''>Levelop</p>
           </Link>
         </div>
         <div className=''>

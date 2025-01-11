@@ -5,7 +5,7 @@ import useFeedQuery from '@hooks/queries/useFeedQuery'
 import FeedCard from './FeedCard'
 
 // 사용 예시를 위한 데모 컴포넌트
-const Feed = () => {
+const Feed = ({ selectedTag }: { selectedTag: string }) => {
   const { feeds, isPending } = useFeedQuery()
 
   return (

@@ -9,19 +9,18 @@ import {
 import React from 'react'
 
 const FeedCard = ({ feed }: { feed: FeedType }) => {
-  // 날짜 포맷팅 함수
-  // const formatDate = (dateString: string) => {
-  //   const date = new Date(dateString)
-  //   return new Intl.DateTimeFormat('ko-KR', {
-  //     year: 'numeric',
-  //     month: 'long',
-  //     day: 'numeric'
-  //   }).format(date)
-  // }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    }).format(date)
+  }
 
   return (
-    <div className='w-full max-w-4xl mx-auto bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200'>
-      <div className='p-6'>
+    <div className='w-full flex gap-4 justify-center'>
+      <div className='max-w-4xl bg-background-primary rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-200'>
         {/* Header - User Info */}
         <div className='flex items-center justify-between mb-4'>
           <div className='flex items-center'>
@@ -36,7 +35,7 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
             </div>
           </div>
           <span className='text-xs text-gray-500'>
-            {/* {formatDate(feed.created_at)} */}
+            {formatDate(feed.created_at)}
           </span>
         </div>
 
@@ -81,6 +80,10 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
         <div className='flex items-center justify-between mt-6 pt-4 border-t border-gray-100'>
           <div className='flex items-center space-x-4'>
             <button className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'>
+              <HeartIcon className='h-5 w-5 mr-1' />
+              <span className='text-sm'>좋아요 {0}</span>
+            </button>
+            <button className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'>
               <ChatBubbleLeftIcon className='h-5 w-5 mr-1' />
               <span className='text-sm'>댓글 {feed.comment?.length || 0}</span>
             </button>
@@ -88,11 +91,11 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
               <BookmarkIcon className='h-5 w-5 mr-1' />
               <span className='text-sm'>저장</span>
             </button>
-            {/* {feed.updated_at !== feed.created_at && (
+            {feed.updated_at !== feed.created_at && (
               <span className='text-xs text-gray-500'>
                 수정됨 {formatDate(feed.updated_at)}
               </span>
-            )} */}
+            )}
           </div>
 
           <button className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'>
@@ -104,7 +107,6 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
         {/* Comments Preview */}
         {feed.comment && feed.comment.length > 0 && (
           <div className='mt-4 pt-4 border-t border-gray-100'>
-            <div className='text-sm text-gray-500 mb-2'>최근 댓글</div>
             <div className='space-y-2'>
               {feed.comment.slice(0, 2).map((comment) => (
                 <div key={comment._id} className='flex items-start space-x-2'>
@@ -116,9 +118,9 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
                       <span className='text-sm font-medium'>
                         {comment.userId}
                       </span>
-                      {/* <span className='text-xs text-gray-500'>
+                      <span className='text-xs text-gray-500'>
                         {formatDate(comment.created_at)}
-                      </span> */}
+                      </span>
                     </div>
                     <p className='text-sm text-gray-600'>{comment.content}</p>
                     <div className='flex items-center space-x-2 mt-1'>
@@ -134,6 +136,7 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
           </div>
         )}
       </div>
+      {/* <div className='flex-1 bg-gradient-to-tr from-blue-200 to-blue-300'></div> */}
     </div>
   )
 }
