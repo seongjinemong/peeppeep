@@ -1,3 +1,3 @@
-export function Test() {
+export function Story() {
   return <div>Test</div>
 }
