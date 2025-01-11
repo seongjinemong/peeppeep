@@ -22,7 +22,7 @@
   --background-sidebar: #1f2029;
   --text-primary: #000000;
   --text-primary-accent: #0f0f0f;
-  --text-secondary: #6e6f72;
+  --text-secondary: #4f4f4f;
   --text-tertiary: #a0a0a0;
   --text-hover: #005df9;
 
@@ -51,14 +51,19 @@
   --text-tertiary: #6e6f72;
   --text-hover: #6b8aff;
 }
-*/
+body {
+  height: 100%;
+}
 
+.draggableNone {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 /* Scrollbar Styles */
 .overflow-y-auto {
-  scrollbar-width: thin;
-  scrollbar-color: #e2e8f0 transparent;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
 
 .overflow-x-auto {
