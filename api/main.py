@@ -51,7 +51,7 @@ class MongoDatetime(BaseModel):
         raise ValueError('Invalid datetime format')
 
 class Comment(BaseModel):
-    id: Optional[ObjectId] = Field(alias="_id", default=None)
+    id: Optional[str] = Field(alias="_id", default=None)
     userId: str
     userName: str
     userProfileUrl: str
@@ -67,7 +67,7 @@ class Comment(BaseModel):
         }
 
 class Feed(BaseModel):
-    id: Optional[ObjectId] = Field(alias="_id", default=None)
+    id: Optional[str] = Field(alias="_id", default=None)
     userId: str
     title: str
     description: str
