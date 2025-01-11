@@ -463,6 +463,48 @@ async def get_story():
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+class LoginRequest(BaseModel):
+    userId: str
+    email: str
+    userProfileUrl: str
+    userName: str
+    
+class LoginResponse(BaseModel):
+    status: int
+    message: str
+    body: str
+
+@app.post("/login")
+async def login(request: LoginRequest):
+    try:
+        existing_user = await UserCollection.find_one({"userId": request.userId})
+        if existing_user:
+            return LoginResponse(
+                status=200,
+                message="success",
+                body="success"
+            )
+        else:
+            user_data = {
+                "userId": request.userId,
+                "email": request.email,
+                "userProfileUrl": request.userProfileUrl,
+                "userName": request.userName,
+                "description": "",
+                "links": {},
+                "interestedTag": [],
+                "created_at": datetime.now(),
+                "updated_at": datetime.now()
+            }
+            await UserCollection.insert_one(user_data)
+            return LoginResponse(
+                status=200,
+                message="success",
+                body="success"
+            )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
     
 if __name__ == "__main__":
