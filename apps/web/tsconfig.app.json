@@ -1,0 +1,36 @@
+{
+  "extends": "@packages/ts-config/react.json",
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite-plugin-svgr/client"],
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true, // for vite
+    "moduleDetection": "force",
+
+    "baseUrl": "./",
+    "paths": {
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@constants/*": ["src/constants/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@utils/*": ["src/utils/*"],
+      "@routes/*": ["src/routes/*"],
+      "@services/*": ["src/services/*"],
+      "@stores/*": ["src/stores/*"],
+      "@apis/*": ["src/apis/*"],
+      "@pages/*": ["src/pages/*"],
+      "@helper/*": ["src/helper/*"],
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src", "svg.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

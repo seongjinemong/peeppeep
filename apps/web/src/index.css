@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+
+  font-size: 13px;
+  height: 100%;
+
+  --placeholder: #cdcdcd;
+  --border: #eeeeee;
+  --background-primary: #ffffff;
+  --background-secondary: #f5f5f5;
+  --background-gray: #f9fafb;
+
+  --background-tertiary: #edeef0;
+  --background-sidebar: #ffffff;
+  --button-disabled: #eaeaea;
+  --button-disabled-text: #4f4f4f;
+  --background-disabled: #767676;
+  --background-sidebar: #1f2029;
+  --text-primary: #000000;
+  --text-primary-accent: #0f0f0f;
+  --text-secondary: #6e6f72;
+  --text-tertiary: #a0a0a0;
+  --text-hover: #005df9;
+
+  /* Fonts */
+  --font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont,
+    system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo',
+    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    sans-serif;
+}
+
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.dark {
+  --placeholder: #4d4d4d;
+  --border: #2a2a2a;
+  --background-gray: #141010;
+  --background-primary: #121212;
+  --background-secondary: #1e1e1e;
+  --background-tertiary: #2a2a2a;
+  --background-sidebar: #1a1a1a;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-tertiary: #6e6f72;
+  --text-hover: #6b8aff;
+}
+*/
+
+/* Scrollbar Styles */
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #e2e8f0 transparent;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.overflow-x-auto {
+  scrollbar-width: none;
+  scrollbar-color: #e2e8f0 transparent;
+  scroll-behavior: smooth;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.root .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #e2e8f0;
+  border-radius: 3px;
+}
+
+.root .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #cbd5e1;
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #4a4a4a;
+  border-radius: 3px;
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: #5a5a5a;
+}
