@@ -5,7 +5,6 @@ import { ToastContainer } from 'react-toastify'
 import LeftSidebar from '@components/ui/Navbar/LedtSidebar'
 import { NavigationBar } from '@components/ui/Navbar/NavigationBar'
 
-import { Add } from '@pages/Add'
 import { Home } from '@pages/Home'
 import { Login } from '@pages/Login'
 import { Story } from '@pages/Story'
@@ -22,8 +21,6 @@ function App() {
         <div className='pt-16 h-screen w-full pl-64 overflow-y-auto bg-background-gray'>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='/add' element={<Add />} />
             <Route path='/story' element={<Story />} />
             <Route path='/profile' element={<div>Profile</div>} />
           </Routes>

@@ -4,3 +4,10 @@ export type User = {
   userId: string
   userProfileURL: string
 }
+
+export type GoogleUserLoginResponse = {
+  email: string
+  given_name: string
+  picture: string
+  sub: string
+}

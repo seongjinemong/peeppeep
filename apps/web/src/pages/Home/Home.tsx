@@ -1,27 +1,25 @@
 import { tempStoryContent } from '@constants/temp.constant'
 import useModalStore from '@stores/modalStore'
-import { useState } from 'react'
 
-import CustomIcons from '@components/common/CustomIcons'
 import CustomIcon from '@components/common/CustomIcons'
+import { AddModal } from '@components/home/AddModal'
+import { Feed } from '@components/home/Feed'
 import StoryList from '@components/story/StoryList'
-import { Chip } from '@components/ui/chip/Chips'
 
-import { Add } from '@pages/Add'
-
-import { Feed } from './components'
+import { useAuth } from '@hooks/useAuth'
 
 export function Home() {
   const openModal = useModalStore((s) => s.openModal)
   const handleAddFeedClick = () => {
     openModal({
-      children: <Add />,
+      children: <AddModal />,
       title: '게시글 추가하기',
       className: 'max-w-3xl mx-auto w-full h-[80vh]'
     })
   }
+
   return (
-    <div className='w-full flex flex-col items-center justify-center px-2 pt-10 md:px-4'>
+    <div className='w-full flex flex-col items-center justify-center px-2 pt-20 md:px-4'>
       <div className='w-full flex flex-col'>
         <div className='w-full flex flex-col gap-4 mx-auto'>
           <div className='w-full'>

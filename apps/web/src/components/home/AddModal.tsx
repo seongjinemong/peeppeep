@@ -18,7 +18,7 @@ interface FormData {
   question: string
 }
 
-export function Add() {
+export function AddModal() {
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState<FormData>({

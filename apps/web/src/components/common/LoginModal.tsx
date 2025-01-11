@@ -5,7 +5,7 @@ import useModalStore from '@stores/modalStore'
 import { jwtDecode } from 'jwt-decode'
 import { useNavigate } from 'react-router-dom'
 
-export function Login() {
+export function LoginModal() {
   const { setUser } = useUserStore()
   const navigate = useNavigate()
   const closeModal = useModalStore((s) => s.closeModal)
