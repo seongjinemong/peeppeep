@@ -59,18 +59,7 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
               {feed.description}
             </p>
 
-            {feed.imageUrl && (
-              <div
-                className='mt-2 cursor-pointer'
-                onClick={() => window.open(feed.vurl, '_blank')}
-              >
-                <img
-                  src={feed.imageUrl}
-                  alt={feed.title}
-                  className='rounded-lg w-full h-48 object-cover'
-                />
-              </div>
-            )}
+            {feed.vurl && <p className='text-blue-500'>{feed.vurl}</p>}
           </div>
 
           <div className='flex flex-col mt-2 gap-2'>

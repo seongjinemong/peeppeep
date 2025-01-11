@@ -1,5 +1,6 @@
-import { AnalyzeFormType, FeedType } from '@/types'
+import { AnalyzeFormType, FeedType, InputFormData } from '@/types'
 import useModalStore from '@stores/modalStore'
+import { useUserStore } from '@stores/userStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -14,15 +15,6 @@ import { Textarea } from '@components/ui/textarea'
 
 import useFeedQuery from '@hooks/queries/useFeedQuery'
 
-interface InputFormData {
-  link: string
-  title: string
-  description: string
-  tags: string[]
-  question: string
-  topic: string
-}
-
 export function AddModal({
   analyzeForm,
   url,
@@ -32,7 +24,9 @@ export function AddModal({
   url: string
   isPostLinkPending?: boolean
 }) {
+  const user = useUserStore((state) => state.user)
   const [formData, setFormData] = useState<InputFormData>({
+    userId: user?.userId || '',
     link: url,
     title: analyzeForm.title || '',
     description: analyzeForm.description || '',
@@ -56,7 +50,7 @@ export function AddModal({
   if (isPostLinkPending) {
     return (
       <div className='flex flex-col items-center justify-center h-full'>
-        <Spinner />
+        <Spinner size='lg' color='blue' />
       </div>
     )
   } else {
@@ -105,7 +99,7 @@ export function AddModal({
                     <label className='block text-sm font-medium text-gray-700 mb-3'>
                       태그
                     </label>
-                    <div className='flex gap-2 items-center'>
+                    <div className='flex gap-2 items-center whitespace-nowrap flex-wrap'>
                       {formData.tags.map((tag) => (
                         <Chip
                           key={tag}

@@ -3,7 +3,16 @@ import { AnalyzeFormType, FeedType, InputFormData } from '@/types'
 import { axiosInstance } from './axiosInstance'
 
 export const postFeedAPi = async (feed: InputFormData) => {
-  const response = await axiosInstance.post('/feed', feed)
+  const data = {
+    userId,
+    title: feed.title,
+    description: feed.description || '',
+    topic: feed.topic,
+    tags: feed.tags || [],
+    question: feed.question
+  }
+  console.log('feed===input', data)
+  const response = await axiosInstance.post('/feed', data)
   return response.data
 }
 

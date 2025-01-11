@@ -27,6 +27,7 @@ export interface AnalyzeFormType
   extends Pick<FeedType, 'description' | 'tags' | 'title' | 'topic'> {}
 
 export interface InputFormData {
+  userId: string
   link: string
   title: string
   description: string

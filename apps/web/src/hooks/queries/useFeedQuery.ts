@@ -1,4 +1,5 @@
 import { FeedType, InputFormData } from '@/types'
+import { useUserStore } from '@stores/userStore'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -45,9 +46,9 @@ export default function useFeedQuery() {
   const handleGetFeed = () => {
     getFeed()
   }
-
+  const user = useUserStore((s) => s.user)
   const handlePostFeed = (feed: InputFormData) => {
-    postFeed(feed)
+    postFeed({ ...feed, userId: user?.userId || '' })
     getFeed()
   }
 
