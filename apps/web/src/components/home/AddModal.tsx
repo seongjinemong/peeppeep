@@ -1,3 +1,4 @@
+import { FeedType } from '@/types'
 import useModalStore from '@stores/modalStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -18,7 +19,7 @@ interface FormData {
   question: string
 }
 
-export function AddModal() {
+export function AddModal({ analyzeForm }: { analyzeForm: any }) {
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState<FormData>({

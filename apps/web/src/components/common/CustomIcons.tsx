@@ -9,7 +9,8 @@ import {
   ChatBubbleLeftIcon,
   MagnifyingGlassIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  PaperAirplaneIcon
 } from '@heroicons/react/24/outline'
 
 type IconName =
@@ -24,6 +25,7 @@ type IconName =
   | 'SearchIcon'
   | 'MenuIcon'
   | 'XMarkIcon'
+  | 'SendIcon'
 interface IconProps {
   name: IconName
   className?: string
@@ -40,7 +42,8 @@ const IconComponents = {
   ChatIcon: ChatBubbleLeftIcon,
   SearchIcon: MagnifyingGlassIcon,
   MenuIcon: Bars3Icon,
-  XMarkIcon: XMarkIcon
+  XMarkIcon: XMarkIcon,
+  SendIcon: PaperAirplaneIcon
 }
 
 const CustomIcon = ({ name, className = '' }: IconProps) => {

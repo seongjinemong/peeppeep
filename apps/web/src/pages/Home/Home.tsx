@@ -1,20 +1,73 @@
 import { tempStoryContent } from '@constants/temp.constant'
 import useModalStore from '@stores/modalStore'
+import { useState } from 'react'
 
 import CustomIcon from '@components/common/CustomIcons'
 import { AddModal } from '@components/home/AddModal'
 import { Feed } from '@components/home/Feed'
 import StoryList from '@components/story/StoryList'
+import { Spinner } from '@components/ui/Spinner'
+import { Button } from '@components/ui/button/Button'
+import Input from '@components/ui/input/Input'
 
-import { useAuth } from '@hooks/useAuth'
+import useFeedQuery from '@hooks/queries/useFeedQuery'
+
+const AddLinkModal = () => {
+  const [link, setLink] = useState('')
+
+  const openModal = useModalStore((s) => s.openModal)
+  const { isPostLinkPending, handlePostLink, analyzeForm } = useFeedQuery()
+  const handleAddLink = () => {
+    handlePostLink(link)
+    openModal({
+      children: isPostLinkPending ? (
+        <div className='flex flex-col items-center justify-center h-full'>
+          <Spinner />
+        </div>
+      ) : (
+        <AddModal analyzeForm={analyzeForm} />
+      ),
+      title: '게시글 추가하기',
+      className: 'max-w-3xl mx-auto w-full h-[80vh]'
+    })
+  }
+  return (
+    <div className='flex flex-col h-full justify-between items-start pt-16 md:pt-20 w-full gap-1'>
+      <div className='w-full'>
+        <Input
+          label='링크'
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+        />
+        <p className='text-sm pl-4 pt-2 text-gray-500'>
+          벨로그 or 블로그 링크를 입력해주세요.
+        </p>
+      </div>
+
+      <div className='flex pt-4 justify-between w-fit mx-auto gap-2 md:gap-4'>
+        <Button variant='outline' size='md'>
+          취소
+        </Button>
+        <Button onClick={handleAddLink} variant='filled' size='md'>
+          추가
+        </Button>
+      </div>
+    </div>
+  )
+}
 
 export function Home() {
   const openModal = useModalStore((s) => s.openModal)
   const handleAddFeedClick = () => {
+    // openModal({
+    //   children: <AddModal />,
+    //   title: '게시글 추가하기',
+    //   className: 'max-w-3xl mx-auto w-full h-[80vh]'
+    // })
     openModal({
-      children: <AddModal />,
-      title: '게시글 추가하기',
-      className: 'max-w-3xl mx-auto w-full h-[80vh]'
+      children: <AddLinkModal />,
+      title: '링크 추가하기',
+      className: 'max-w-lg mx-auto w-full h-[40vh]'
     })
   }
 

@@ -6,6 +6,7 @@ import { LoginModal } from '@components/common'
 import CustomIcon from '@components/common/CustomIcons'
 
 import { useAuth } from '@hooks/useAuth'
+import { useParamsSearch } from '@hooks/useParamsSearch'
 
 import { Button } from '../button/Button'
 import { Chip } from '../chip/Chips'
@@ -20,11 +21,14 @@ export function NavigationBar() {
     '인공지능',
     '보안 . 네트워크'
   ]
-  const [selectedTag, setSelectedTag] = useState<string>('전체')
-
-  const handleTagClick = (tag: string) => {
-    setSelectedTag(tag)
-  }
+  const {
+    search,
+    handleSearch,
+    tag,
+    handleTagClick,
+    handleSearchInput,
+    searchInput
+  } = useParamsSearch()
   const { isAuth, handleLogout } = useAuth()
   const { openModal } = useModalStore()
   const openLoginModal = () => {
@@ -50,6 +54,8 @@ export function NavigationBar() {
         <div className='w-1/2 flex items-center gap-2'>
           <input
             type='text'
+            onChange={handleSearchInput}
+            value={searchInput}
             className='w-full h-full border border-background-secondary shadow-sm outline-none rounded-full px-4 py-3'
             placeholder='검색'
           />
@@ -98,16 +104,16 @@ export function NavigationBar() {
         </div>
       </nav>
       {location.pathname === '/' && (
-        <div className='flex gap-2 w-full absolute top-16 left-64 z-50 py-4 bg-background-primary shadow-inset-b'>
+        <div className='flex gap-2 w-full absolute top-16 left-64 py-4 bg-background-primary shadow-inset-b'>
           <div className='flex gap-2 px-4'>
-            {TagElements.map((tag) => (
+            {TagElements.map((v) => (
               <Chip
                 size='sm'
                 variant='default'
-                selected={tag === selectedTag}
-                onClick={() => handleTagClick(tag)}
+                selected={v === tag || (tag === null && v === '전체')}
+                onClick={() => handleTagClick(v)}
               >
-                {tag}
+                {v}
               </Chip>
             ))}
           </div>

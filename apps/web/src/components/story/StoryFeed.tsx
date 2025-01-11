@@ -7,7 +7,7 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
   const navigate = useNavigate()
   return (
     <div
-      className='w-1/5 flex flex-col shrink-0 bg-sky-50 px-4 py-4 shadow-sm rounded-xl overflow-hidden gap-3 hover:bg-background-secondary/10 transition-colors cursor-pointer'
+      className='w-64 flex flex-col shrink-0 bg-sky-50 px-4 py-4 shadow-sm rounded-xl overflow-hidden gap-3 hover:bg-background-secondary/10 transition-colors cursor-pointer'
       onClick={() => navigate('/story')}
     >
       <div className='flex justify-between items-start mb-2'>

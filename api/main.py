@@ -17,8 +17,8 @@ load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 MONGO_DB_NAME = os.getenv("MONGO_DB_NAME")
 
-client = AsyncIOMotorClient(MONGO_URI)
-db = client[MONGO_DB_NAME]
+dbclient = AsyncIOMotorClient(MONGO_URI)
+db = dbclient[MONGO_DB_NAME]
 FeedCollection = db['Feed']
 UserCollection = db['User']
 
@@ -120,16 +120,17 @@ def extract_blog_content(url: str) -> str:
     return json_output['text']
 
 async def analyze_blog_content(text: str) -> dict:
+
     response = await client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {
-                "role": "system",
+               "role": "system",
                 "content": """블로그 내용에서 제목, 주요 내용, URL, 태그 등을 추출합니다.\n\n
                 # Steps\n
                 1. 제목 추출: 블로그 내용에서 명확한 제목을 찾고, 이를 추출합니다. 20자를 절대 넘어서는 안됩니다.\n
                 2. 주요 내용 식별: 전체 내용을 분석하여 요약해주세요.\n
-                3. URL 찾기: 블로그 내용 중에 포함된 URL을 추출합니다.\n
+               3. topic 찾기: 블로그 내용을 대표할 수 있는 topic을 추출합니다.단, topic은 다음 중 하나여야 합니다. \n React, Vue, Angular, Next.js, TypeScript, JavaScript, HTML/CSS, Tailwind, SASS/SCSS, Redux, Recoil, Zustand, React Query, Webpack, Vite, Node.js, Express, NestJS, Spring, Django, FastAPI, Flask, Laravel, Ruby on Rails, ASP.NET, MySQL, PostgreSQL, MongoDB, Redis, Firebase, Supabase, React Native, Flutter, Swift, Kotlin, iOS, Android, AWS, Docker, Kubernetes, Jenkins, GitHub Actions, Nginx, Linux, Git, GraphQL, WebSocket, REST API, Prisma, Elasticsearch, WebRTC, Jest, Cypress, Vitest, Selenium, Postman, Vercel, Netlify, Heroku, GCP, Azure, BFS, DFS, Dynamic Programming, Greedy, Binary Search, Hash Table, Stack, Queue, Heap, Tree, Graph, Sorting, Two Pointers, Sliding Window, BackTracking, Recursion, Data Structure, Network, Operating System, Database, Computer Architecture, Compiler, Memory Management, Process/Thread, TCP/IP, HTTP, Design Pattern, Agile, Scrum, TDD, DDD, MSA, Clean Code, Refactoring, OOP, Functional Programming, CI/CD, Web Service, Mobile App, Desktop App, Browser Extension, Chat Application, E-commerce, SNS, Game, CMS, Security, Authentication, Authorization, OAuth, JWT, Encryption, HTTPS, SQL Injection, XSS, CSRF, Performance, Caching, Load Balancing, Memory Leak, Browser Rendering, Code Splitting, Lazy Loading, Web Vitals, SEO, Debugging, Error Handling, Logging, Monitoring, Code Review, Documentation, System Design, API Design, UX/UI, Accessibility, Web3, AI/ML, Blockchain, Microservices, Serverless, PWA, WebAssembly, Edge Computing, Cloud Native, IoT\n
                 4. 태그 추출: 내용 중에서 관련된 주제나 키워드를 기반으로 적절한 태그를 생성합니다."""
             },
             {
@@ -137,31 +138,40 @@ async def analyze_blog_content(text: str) -> dict:
                 "content": text
             }
         ],
-        response_format={
-            "type": "json_schema",
-            "json_schema": {
-                "type": "object",
-                "properties": {
-                    "title": {"type": "string"},
-                    "summary": {"type": "string"},
-                    "url": {"type": "string"},
-                    "tags": {
-                        "type": "array",
-                        "items": {"type": "string"}
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "blog_extraction",
+                    "schema": {
+                    "type": "object",
+                    "properties": {
+                        "title": {"type": "string"},
+                        "summary": {"type": "string"},
+                        "url": {"type": "string"},
+                        "tags": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        }
+                    },
+                    "required": ["title", "summary", "url", "tags"],
+                    "additionalProperties": False
                     }
-                },
-                "required": ["title", "summary", "url", "tags"]
+                }
             }
-        }
-    )
-    return json.loads(response.choices[0].message.content)
+        )
+    data = json.loads(response.choices[0].message.content)
+    print(data)
+    return data
 
 # API 엔드포인트
 @app.post("/analyze-blog/", response_model=BlogResponse)
 async def analyze_blog(request: BlogRequest):
+    print(request.url)
     try:
         blog_text = extract_blog_content(request.url)
+        print(blog_text,'=====blog_text')
         result_data = await analyze_blog_content(blog_text)
+        print(result_data,'====result_data')
         return BlogResponse(
             status=200,
             message="success",

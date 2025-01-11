@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useState } from 'react'
 
-import { getFeedApi, postFeedAPi } from '@apis/feedApi'
+import { getFeedApi, postFeedAPi, postLinkApi } from '@apis/feedApi'
 
 const useGetFeedQuery = ({
   setFeeds
@@ -27,14 +27,33 @@ const usePostFeedQuery = () => {
     }
   })
 }
+const usePostLinkQuery = ({
+  setAnalyzeForm
+}: {
+  setAnalyzeForm: (feed: FeedType[]) => void
+}) => {
+  return useMutation({
+    mutationFn: postLinkApi,
+    onSuccess: (data) => {
+      console.log('=====postLinkApi=====', data)
+    }
+  })
+}
 
 export default function useFeedQuery() {
   const [feeds, setFeeds] = useState<FeedType[]>([])
+  const [analyzeForm, setAnalyzeForm] = useState<FeedType[]>([])
 
   const { mutate: getFeed, isPending } = useGetFeedQuery({ setFeeds })
+  const { mutate: postLink, isPending: isPostLinkPending } = usePostLinkQuery({
+    setAnalyzeForm
+  })
 
   const handleGetFeed = async () => {
     getFeed()
+  }
+  const handlePostLink = async (link: string) => {
+    postLink(link)
   }
   useEffect(() => {
     handleGetFeed()
@@ -42,6 +61,9 @@ export default function useFeedQuery() {
 
   return {
     feeds,
-    isPending
+    isPending,
+    isPostLinkPending,
+    handlePostLink,
+    analyzeForm
   }
 }

@@ -12,3 +12,9 @@ export const getFeedApi = async () => {
   console.log(response.data)
   return response.data
 }
+
+export const postLinkApi = async (link: string) => {
+  const response = await axiosInstance.post('/analyze-blog', { url: link })
+  console.log(response.data)
+  return response.data
+}
