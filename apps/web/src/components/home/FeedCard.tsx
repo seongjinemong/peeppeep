@@ -6,7 +6,7 @@ import {
   UserCircleIcon,
   HeartIcon
 } from '@heroicons/react/24/outline'
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 
 import CustomIcon from '@components/common/CustomIcons'
 
@@ -18,11 +18,20 @@ import CommentList from './CommentList'
 
 const FeedCard = ({ feed }: { feed: FeedType }) => {
   const [isCommentOpen, setIsCommentOpen] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
 
   const handleCommentClick = () => {
     setIsCommentOpen(!isCommentOpen)
   }
   const { handlePostFeedLike } = useFeedQuery()
+
+  useEffect(() => {
+    const userId = JSON.parse(localStorage.getItem('state') || '{}')?.user?.userId
+    console.log(userId, feed.likedUser)
+    if (userId && feed.likedUser.includes(userId[0])) {
+      setIsLiked(true);
+    }
+  }, []);
 
   return (
     <div className='w-full flex flex-col gap-2 max-w-4xl mx-auto mt-4'>
@@ -86,10 +95,13 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
                 <button
                   onClick={() => {
                     handlePostFeedLike(feed._id)
+                    setIsLiked(!isLiked)
                   }}
                   className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'
                 >
-                  <HeartIcon className='h-5 w-5 mr-1' />
+                  <HeartIcon
+                    className={`h-5 w-5 mr-1 ${isLiked ? 'fill-red-500 text-red-500' : ''}`}
+                  />
                   <span className='text-sm'>
                     좋아요 {feed.likedUser ? feed.likedUser.length : 0}
                   </span>
