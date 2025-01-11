@@ -15,19 +15,20 @@ export function NavigationBar() {
         </div>
         <div className=''>
           <Dropdown
+            width='w-48'
             trigger={
               <div className='bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer'>
-                <CustomIcons.UserIcon className='w-6 h-6 bg-background-primary text-background-primary text-white' />
+                <CustomIcons.UserIcon className='w-6 h-6 text-background-primary' />
               </div>
             }
             items={[
               {
-                label: '프로필',
+                label: <div className='text-base'>프로필</div>,
                 onClick: () => {}
               },
               {
                 label: (
-                  <div className='flex items-center gap-2'>
+                  <div className='flex items-center gap-2 justify-between w-full text-base'>
                     로그아웃
                     <CustomIcons.LogoutIcon className='w-6 h-6 text-primary' />
                   </div>
