@@ -8,7 +8,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        filled: 'bg-aicfo text-white hover:bg-aicfo-accent',
+        filled: 'bg-blue-500 text-white hover:bg-blue-600',
         default:
           'bg-background-primary text-secondary hover:bg-background-primary-accent',
         destructive: 'bg-red-500 text-white hover:bg-red-600',
@@ -19,8 +19,8 @@ const buttonVariants = cva(
         xs: 'px-3 py-1 w-fit rounded-md text-sm',
         sm: 'px-4 py-2 w-fit rounded-lg',
         md: 'text-lg px-16 py-2 rounded-xl',
-        lg: 'text-lg w-1/2 py-3 px-5 rounded-2xl',
-        xl: 'text-lg w-full py-3 px-5 rounded-2xl',
+        lg: 'text-lg w-1/2 py-3 px-5 rounded-xl',
+        xl: 'text-lg w-full py-3 px-5 rounded-xl',
         icon: 'h-10 w-10'
       }
     },

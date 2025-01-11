@@ -1,4 +1,4 @@
-export type Feed = {
+export type FeedType = {
   id: string
   userId: string
   userName: string
@@ -7,4 +7,8 @@ export type Feed = {
   topic: string
   tags: string[]
   question?: string
+}
+
+export type FeedProps = {
+  feed: Feed
 }

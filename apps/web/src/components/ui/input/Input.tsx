@@ -1,100 +1,76 @@
-import { forwardRef } from 'react'
+import React from 'react'
 
-import { cn } from '../../../utils'
-
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: boolean
-  message?: string
-  label?: string
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string
+  error?: string
+  required?: boolean
 }
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, error, message, label, ...props }, ref) => {
-    return (
-      <div className='relative w-full group'>
-        <input
-          type='text'
-          className={cn(
-            'outline-none px-3 py-3 peer w-full',
+const Input = ({
+  className = '',
+  type = 'text',
+  label,
+  error,
+  required,
+  disabled,
+  id,
+  ...props
+}: InputProps) => {
+  const [isFocused, setIsFocused] = React.useState(false)
+  const [hasContent, setHasContent] = React.useState(false)
 
-            error && 'border-red-500',
-            className
-          )}
-          placeholder=' '
-          ref={ref}
-          {...props}
-        />
-
-        {label && (
-          <label
-            className={cn(
-              'absolute left-[9px] top-px text-md transition-all duration-300 px-1',
-              'transform -translate-y-1/2 pointer-events-none',
-              'peer-placeholder-shown:top-1/2 peer-placeholder-shown:text-lg',
-              'group-focus-within:!top-px group-focus-within:!text-md',
-              error
-                ? 'text-red-500'
-                : 'text-gray-500 group-focus-within:!text-blue-500'
-            )}
-          >
-            {label}
-          </label>
-        )}
-
-        {/* Fieldset for unfocused/empty state */}
-        <fieldset
-          className={cn(
-            'inset-0 absolute border rounded pointer-events-none mt-[-9px]',
-            'invisible peer-placeholder-shown:visible',
-            error
-              ? 'border-red-500 group-hover:border-red-700'
-              : 'border-gray-400 group-hover:border-gray-700 group-focus-within:!border-blue-500',
-            'group-focus-within:border-2'
-          )}
-        >
-          <legend
-            className={cn(
-              'ml-2 px-0 text-md transition-all duration-300',
-              'invisible max-w-[0.01px] whitespace-nowrap',
-              'group-focus-within:max-w-full group-focus-within:px-1'
-            )}
-          >
-            {label}
-          </legend>
-        </fieldset>
-
-        {/* Fieldset for focused/filled state */}
-        <fieldset
-          className={cn(
-            'inset-0 absolute border w-full rounded pointer-events-none mt-[-9px]',
-            'visible peer-placeholder-shown:invisible',
-            error
-              ? 'border-red-500 group-hover:border-red-700'
-              : 'border-gray-400 group-hover:border-gray-700 group-focus-within:!border-blue-500',
-            'group-focus-within:border-2'
-          )}
-        >
-          <legend className='ml-2 text-md invisible px-1 max-w-full whitespace-nowrap'>
-            {label}
-          </legend>
-        </fieldset>
-
-        {message && (
-          <p
-            className={cn(
-              'mt-1 text-sm',
-              error ? 'text-red-500' : 'text-gray-500'
-            )}
-          >
-            {message}
-          </p>
-        )}
-      </div>
-    )
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHasContent(e.target.value.length > 0)
+    if (props.onChange) {
+      props.onChange(e)
+    }
   }
-)
 
-Input.displayName = 'Input'
+  return (
+    <div className='relative w-full'>
+      <input
+        id={id}
+        type={type}
+        disabled={disabled}
+        required={required}
+        {...props}
+        className={`
+          outline-none
+          peer w-full rounded-lg border bg-transparent px-4 pt-6 pb-2 text-base
+          placeholder:text-transparent transition-all duration-200
+          ${disabled ? 'cursor-not-allowed opacity-50' : 'opacity-100'}
+          ${
+            error
+              ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+              : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+          }
+          ${className}
+        `}
+        placeholder={label}
+        onFocus={() => setIsFocused(true)}
+        onBlur={(e) => {
+          setIsFocused(false)
+          setHasContent(e.target.value.length > 0)
+        }}
+        onChange={handleInputChange}
+      />
+      <label
+        htmlFor={id}
+        className={`
+          absolute left-4 top-4 z-10 origin-[0] -translate-y-3 scale-75
+          duration-200 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100
+          peer-focus:-translate-y-3 peer-focus:scale-75
+          ${disabled ? 'cursor-not-allowed' : 'cursor-text'}
+          ${error ? 'text-red-500' : 'text-gray-500'}
+          ${isFocused || hasContent ? '-translate-y-3 scale-75' : ''}
+        `}
+      >
+        {label}
+        {required && <span className='text-red-500 ml-1'>*</span>}
+      </label>
+      {error && <p className='mt-1 text-sm text-red-500'>{error}</p>}
+    </div>
+  )
+}
 
-export { Input }
+export default Input

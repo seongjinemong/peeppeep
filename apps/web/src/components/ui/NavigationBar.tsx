@@ -6,8 +6,8 @@ import { Dropdown } from './dropdown/Dropdown'
 
 export function NavigationBar() {
   return (
-    <header className='w-full shrink-0  h-16 bg-background-primary shadow-sm'>
-      <nav className='max-w-4xl mx-auto w-full flex items-center justify-between h-full sm:px-4 px-6'>
+    <header className='w-full z-50 shrink-0 fixed top-0 left-0 right-0 h-16 bg-background-primary shadow-sm'>
+      <nav className='max-w-6xl mx-auto w-full flex items-center justify-between h-full sm:px-4 px-6'>
         <div className='flex items-center gap-4'>
           <Link to='/' className='text-2xl font-bold'>
             <div>Logo</div>
