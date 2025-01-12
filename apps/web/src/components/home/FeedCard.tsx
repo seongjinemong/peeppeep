@@ -6,10 +6,14 @@ import {
   UserCircleIcon,
   HeartIcon
 } from '@heroicons/react/24/outline'
+import useModalStore from '@stores/modalStore'
+import { useUserStore } from '@stores/userStore'
 import React, { useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
+import AddLinkModal from '@components/common/AddLinkModal'
 import CustomIcon from '@components/common/CustomIcons'
+import { LoginModal } from '@components/common/LoginModal'
 
 import useFeedQuery from '@hooks/queries/useFeedQuery'
 
@@ -34,6 +38,26 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
       setIsLiked(true)
     }
   }, [])
+  const openModal = useModalStore((s) => s.openModal)
+  const user = useUserStore((s) => s.user)
+  const handleAddFeedClick = () => {
+    if (!user) {
+      openModal({
+        children: <LoginModal />,
+        title: '로그인',
+        className: 'max-w-lg mx-auto w-full h-[40vh]'
+      })
+    }
+    // openModal({
+    //   children: <AddModal />,
+    //   title: '게시글 추가하기',
+    //   className: 'max-w-3xl mx-auto w-full h-[80vh]'
+    // })
+    else {
+      handlePostFeedLike(feed._id)
+      setIsLiked(!isLiked)
+    }
+  }
 
   return (
     <div className='w-full flex flex-col gap-2 max-w-4xl mx-auto mt-4'>
@@ -100,8 +124,7 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
               <div className='flex items-center space-x-4'>
                 <button
                   onClick={() => {
-                    handlePostFeedLike(feed._id)
-                    setIsLiked(!isLiked)
+                    handleAddFeedClick()
                   }}
                   className='flex items-center text-gray-500 hover:text-blue-600 transition-colors'
                 >

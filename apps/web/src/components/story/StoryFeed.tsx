@@ -1,4 +1,5 @@
 import { FeedType } from '@/types'
+import { UserCircleIcon } from '@heroicons/react/24/outline'
 import { useNavigate } from 'react-router-dom'
 
 import CustomIcon from '@components/common/CustomIcons'
@@ -51,10 +52,15 @@ export function StoryFeed({ content }: { content: FeedType }) {
         <div className='flex items-center gap-3 justify-between'>
           <div className='flex gap-2'>
             <div className='flex items-center justify-center w-6 h-6 bg-secondary rounded-full'>
-              <CustomIcon
-                name='UserIcon'
-                className='w-4 h-4 text-background-primary'
-              />
+              {content.userInfo.userProfileUrl ? (
+                <img
+                  src={content.userInfo.userProfileUrl}
+                  alt='user profile'
+                  className='w-full h-full object-cover rounded-full'
+                />
+              ) : (
+                <UserCircleIcon className='w-6 h-6 text-secondary' />
+              )}
             </div>
             <span className='text-secondary font-medium'>
               {content.userInfo.userName}

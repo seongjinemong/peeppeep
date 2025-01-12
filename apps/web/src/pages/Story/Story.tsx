@@ -2,7 +2,6 @@ import useStoryStore from '@stores/storyStore'
 import { useEffect } from 'react'
 
 import StoryContent from '@components/story/StoryContent'
-import StoryList from '@components/story/StoryList'
 
 import useStoryQuery from '@hooks/queries/useStory'
 

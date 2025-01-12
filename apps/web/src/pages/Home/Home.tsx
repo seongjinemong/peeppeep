@@ -7,55 +7,28 @@ import AddLinkModal from '@components/common/AddLinkModal'
 import CustomIcon from '@components/common/CustomIcons'
 import { Feed } from '@components/home/Feed'
 import StoryList from '@components/story/StoryList'
-import { Button } from '@components/ui/button/Button'
-
-import { useAuth } from '@hooks/useAuth'
-
-function LoginRequest() {
-  const openModal = useModalStore((s) => s.openModal)
-  const openLoginModal = () => {
-    openModal({
-      children: <LoginModal />,
-      title: '로그인',
-      className: 'max-w-lg mx-auto w-full h-[40vh]'
-    })
-  }
-  return (
-    <div>
-      <Button onClick={openLoginModal} className='mt-4'>
-        로그인으로 이동
-      </Button>
-    </div>
-  )
-}
-
-export function OpenLoginRequestModal() {
-  const openModal = useModalStore((s) => s.openModal)
-  openModal({
-    children: <LoginRequest />,
-    title: '로그인 후 이동해주세요.',
-    className: 'max-w-lg mx-auto w-full h-[40vh]'
-  })
-}
 
 export function Home() {
   const openModal = useModalStore((s) => s.openModal)
   const user = useUserStore((s) => s.user)
   const handleAddFeedClick = () => {
     if (!user) {
-      OpenLoginRequestModal()
-      return
-    }
-    // openModal({
-    //   children: <AddModal />,
-    //   title: '게시글 추가하기',
-    //   className: 'max-w-3xl mx-auto w-full h-[80vh]'
-    // })
-    openModal({
-      children: <AddLinkModal />,
-      title: '링크 추가하기',
-      className: 'max-w-lg mx-auto w-full h-[40vh]'
-    })
+      openModal({
+        children: <LoginModal />,
+        title: '로그인',
+        className: 'max-w-lg mx-auto w-full h-[40vh]'
+      })
+    } else
+      // openModal({
+      //   children: <AddModal />,
+      //   title: '게시글 추가하기',
+      //   className: 'max-w-3xl mx-auto w-full h-[80vh]'
+      // })
+      openModal({
+        children: <AddLinkModal />,
+        title: '링크 추가하기',
+        className: 'max-w-lg mx-auto w-full h-[40vh]'
+      })
   }
 
   return (

@@ -1,8 +1,11 @@
 import { CommentType } from '@/types'
 import { HeartIcon, UserCircleIcon } from '@heroicons/react/16/solid'
+import useModalStore from '@stores/modalStore'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 import CustomIcon from '@components/common/CustomIcons'
+import { LoginModal } from '@components/common/LoginModal'
 
 import useCommentQuery from '@hooks/queries/useCommentQuery'
 import useFeedQuery from '@hooks/queries/useFeedQuery'
@@ -26,6 +29,31 @@ export default function CommentList({
   const [commentInput, setCommentInput] = useState('')
   const { user } = useAuth()
   const { handlePostCommentLike } = useCommentQuery()
+  const openModal = useModalStore((s) => s.openModal)
+
+  const handleAddComment = () => {
+    if (!user) {
+      openModal({
+        children: <LoginModal />,
+        title: '로그인',
+        className: 'max-w-lg mx-auto w-full h-[40vh]'
+      })
+    } else {
+      handlePostComment({
+        feed_id: feedId,
+        comment: {
+          userId: user?.userId || '',
+          content: commentInput
+        }
+      })
+
+      // openModal({
+      //   children: <AddModal />,
+      //   title: '게시글 추가하기',
+      //   className: 'max-w-3xl mx-auto w-full h-[80vh]'
+      // })
+    }
+  }
   return (
     <div
       className={`flex-1 bg-background-primary space-y-2 rounded-lg shadow-sm relative w-full overflow-hidden transition-all duration-300 ${
@@ -63,11 +91,15 @@ export default function CommentList({
                       <div className='flex items-center'>
                         <button
                           onClick={() => {
-                            handlePostCommentLike({
-                              feedId: feedId,
-                              userId: user?.userId || '',
-                              commentorId: comment.userId
-                            })
+                            if (!user) {
+                              toast.error('로그인 후 이용해주세요.')
+                            } else {
+                              handlePostCommentLike({
+                                feedId: feedId,
+                                userId: user?.userId || '',
+                                commentorId: comment.userId
+                              })
+                            }
                           }}
                           className={`flex items-center gap-1 transition-colors`}
                         >
@@ -102,13 +134,17 @@ export default function CommentList({
                 <form
                   onSubmit={(e) => {
                     e.preventDefault()
-                    handlePostComment({
-                      feed_id: feedId,
-                      comment: {
-                        userId: user?.userId || '',
-                        content: commentInput
-                      }
-                    })
+                    if (!user) {
+                      toast.error('로그인 후 이용해주세요.')
+                    } else {
+                      handlePostComment({
+                        feed_id: feedId,
+                        comment: {
+                          userId: user?.userId || '',
+                          content: commentInput
+                        }
+                      })
+                    }
                   }}
                 >
                   <input
@@ -140,13 +176,7 @@ export default function CommentList({
                 <form
                   onSubmit={(e) => {
                     e.preventDefault()
-                    handlePostComment({
-                      feed_id: feedId,
-                      comment: {
-                        userId: user?.userId || '',
-                        content: commentInput
-                      }
-                    })
+                    handleAddComment()
                   }}
                 >
                   <input
