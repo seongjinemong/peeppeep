@@ -1,3 +1,5 @@
+import { UserInfo } from './userType'
+
 export interface CommentType {
   _id: string
   userId: string

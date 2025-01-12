@@ -1,11 +1,12 @@
-import { FeedType, StoryContentType } from '@/types'
+import { FeedType } from '@/types'
+import useStoryStore from '@stores/storyStore'
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
 
 import { getStoryApi } from '@apis/feedApi'
 
-const useGetStory = (setStory: (story: StoryContentType[]) => void) => {
+const useGetStory = (setStory: (story: FeedType[]) => void) => {
   return useMutation({
     mutationFn: getStoryApi,
     onSuccess: (data) => {
@@ -18,10 +19,13 @@ const useGetStory = (setStory: (story: StoryContentType[]) => void) => {
   })
 }
 const useStoryQuery = () => {
-  const [story, setStory] = useState<StoryContentType[]>([])
+  const { setStory } = useStoryStore()
+
   const { mutate: getStory } = useGetStory(setStory)
-  const handleGetStory = () => {}
-  return { handleGetStory, story }
+  const handleGetStory = () => {
+    getStory()
+  }
+  return { handleGetStory }
 }
 
 export default useStoryQuery

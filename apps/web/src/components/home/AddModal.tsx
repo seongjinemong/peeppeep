@@ -44,8 +44,33 @@ export function AddModal({
     handlePostFeed(formData)
     closeModal()
   }
-
+  const [tagSearchOpen, setTagSearchOpen] = useState(false)
   const { closeModal } = useModalStore()
+  const handleTagAddClick = () => {
+    setTagSearchOpen(true)
+  }
+  const [tagInput, setTagInput] = useState('')
+
+  const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      const newTag = tagInput.trim()
+      if (newTag && !formData.tags.includes(newTag)) {
+        setFormData((prev) => ({
+          ...prev,
+          tags: [...prev.tags, newTag]
+        }))
+        setTagInput('')
+      }
+    }
+  }
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove)
+    }))
+  }
 
   if (isPostLinkPending) {
     return (
@@ -94,39 +119,34 @@ export function AddModal({
                       handleFormDataChange('description', e.target.value)
                     }
                   />
-
                   <div>
                     <label className='block text-sm font-medium text-gray-700 mb-3'>
                       태그
                     </label>
-                    <div className='flex gap-2 items-center whitespace-nowrap flex-wrap'>
-                      {formData.tags.map((tag) => (
-                        <Chip
-                          key={tag}
-                          variant='outlined'
-                          size='sm'
-                          onClick={() => handleFormDataChange('tags', tag)}
-                        >
-                          {tag}
-                        </Chip>
-                      ))}
-                      <CustomPopover
-                        trigger={
+                    <div className='flex'>
+                      <div className='flex gap-2 items-center flex-wrap'>
+                        {formData.tags.map((tag) => (
                           <Chip
+                            key={tag}
                             variant='outlined'
-                            size='sm'
-                            className='cursor-pointer w-8 h-8'
+                            size='xs'
+                            onClick={() => handleRemoveTag(tag)}
+                            className='cursor-pointer hover:bg-red-50 transition-colors'
                           >
-                            +
+                            {tag}
                           </Chip>
-                        }
-                        position='top'
-                        className='-top-20 left-10'
-                        header={<div>태그 추가</div>}
-                      />
+                        ))}
+                      </div>
                     </div>
+                    <input
+                      type='text'
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyDown={handleAddTag}
+                      className='px-3 mt-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none'
+                      placeholder='태그 추가하기'
+                    />
                   </div>
-
                   <Input
                     name='question'
                     id='question'

@@ -54,7 +54,7 @@ export default function CommentList({
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center gap-2'>
                         <span className='text-sm font-medium text-gray-900'>
-                          {comment.userId}
+                          {comment.userInfo.userName}
                         </span>
                         <span className='text-xs text-gray-500'>
                           {formatDate(comment.created_at)}

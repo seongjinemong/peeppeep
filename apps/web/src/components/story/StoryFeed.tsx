@@ -1,9 +1,9 @@
-import { StoryContentType } from '@/types'
+import { FeedType } from '@/types'
 import { useNavigate } from 'react-router-dom'
 
 import CustomIcon from '@components/common/CustomIcons'
 
-export function StoryFeed({ content }: { content: StoryContentType }) {
+export function StoryFeed({ content }: { content: FeedType }) {
   const navigate = useNavigate()
   return (
     <div
@@ -37,13 +37,13 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
       </div>
 
       <div className='flex flex-col gap-3 mt-2'>
-        <div className='flex gap-1 flex-wrap'>
+        <div className='flex gap-1 overflow-x-hidden whitespace-nowrap'>
           {content.tags.map((tag, index) => (
             <span
               key={index}
               className='py-1 rounded-full bg-background-secondary/20 text-secondary text-sm'
             >
-              #{tag}
+              #{tag}{' '}
             </span>
           ))}
         </div>
@@ -57,7 +57,7 @@ export function StoryFeed({ content }: { content: StoryContentType }) {
               />
             </div>
             <span className='text-secondary font-medium'>
-              {content.userName}
+              {content.userInfo.userName}
             </span>
           </div>
           <span className='text-secondary font-medium flex items-center gap-1'>

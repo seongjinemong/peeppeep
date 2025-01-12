@@ -7,6 +7,7 @@ import {
   HeartIcon
 } from '@heroicons/react/24/outline'
 import React, { useRef, useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 
 import CustomIcon from '@components/common/CustomIcons'
 
@@ -26,12 +27,13 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
   const { handlePostFeedLike } = useFeedQuery()
 
   useEffect(() => {
-    const userId = JSON.parse(localStorage.getItem('state') || '{}')?.user?.userId
+    const userId = JSON.parse(localStorage.getItem('state') || '{}')?.user
+      ?.userId
     console.log(userId, feed.likedUser)
     if (userId && feed.likedUser.includes(userId[0])) {
-      setIsLiked(true);
+      setIsLiked(true)
     }
-  }, []);
+  }, [])
 
   return (
     <div className='w-full flex flex-col gap-2 max-w-4xl mx-auto mt-4'>
@@ -75,7 +77,11 @@ const FeedCard = ({ feed }: { feed: FeedType }) => {
               {feed.description}
             </p>
 
-            {feed.vurl && <p className='text-blue-500'>{feed.vurl}</p>}
+            {feed.vurl && (
+              <Link to={feed.vurl} target='_blank' className='text-blue-500'>
+                {feed.vurl}
+              </Link>
+            )}
           </div>
 
           <div className='flex flex-col mt-2 gap-2'>

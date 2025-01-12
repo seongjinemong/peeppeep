@@ -1,5 +1,6 @@
 import Logo from '@assets/images/icons/Logo.svg?react'
 import useModalStore from '@stores/modalStore'
+import { useUserStore } from '@stores/userStore'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -33,7 +34,7 @@ export function NavigationBar() {
       className: 'max-w-lg mx-auto w-full h-[40vh]'
     })
   }
-
+  const user = useUserStore((s) => s.user)
   const navigate = useNavigate()
   return (
     <header className='w-full z-50 shrink-0 fixed top-0 left-0 right-0 h-16 bg-background-primary'>
@@ -63,9 +64,10 @@ export function NavigationBar() {
               width='w-48'
               trigger={
                 <div className='bg-blue-500 w-10 h-10 rounded-full flex items-center justify-center cursor-pointer'>
-                  <CustomIcon
-                    name='UserIcon'
-                    className='w-6 h-6 text-background-primary'
+                  <img
+                    src={user?.userProfileUrl}
+                    alt='user'
+                    className='w-full h-full rounded-full'
                   />
                 </div>
               }

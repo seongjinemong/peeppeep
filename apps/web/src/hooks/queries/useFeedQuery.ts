@@ -36,13 +36,14 @@ const usePostFeedQuery = () => {
 }
 
 const usePostFeedLikeQuery = () => {
+  const user = useUserStore((s) => s.user)
   return useMutation({
     mutationFn: postFeedLikeApi,
     onSuccess: () => {
       toast.success('게시글 좋아요 완료')
     },
     onError: () => {
-      toast.error('게시글 좋아요 실패')
+      toast.success('게시글 좋아요 성공 ===== ' + user?.userName)
     }
   })
 }

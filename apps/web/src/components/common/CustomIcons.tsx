@@ -13,6 +13,8 @@ import {
   PaperAirplaneIcon
 } from '@heroicons/react/24/outline'
 
+import LogoIcon from '../../assets/images/icons/Logo.svg?react'
+
 type IconName =
   | 'UserIcon'
   | 'LogoutIcon'
@@ -26,6 +28,7 @@ type IconName =
   | 'MenuIcon'
   | 'XMarkIcon'
   | 'SendIcon'
+  | 'LogoIcon'
 interface IconProps {
   name: IconName
   className?: string
@@ -43,7 +46,8 @@ const IconComponents = {
   SearchIcon: MagnifyingGlassIcon,
   MenuIcon: Bars3Icon,
   XMarkIcon: XMarkIcon,
-  SendIcon: PaperAirplaneIcon
+  SendIcon: PaperAirplaneIcon,
+  LogoIcon: LogoIcon
 }
 
 const CustomIcon = ({ name, className = '' }: IconProps) => {
