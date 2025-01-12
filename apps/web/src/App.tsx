@@ -10,6 +10,13 @@ import { Story } from '@pages/Story'
 
 import { ModalPortal } from '@utils/helper'
 
+function openLoginRequestModal() {
+  const modal = document.getElementById('login-request-modal')
+  if (modal) {
+    modal.style.display = 'block'
+  }
+}
+
 function App() {
   return (
     <GoogleOAuthProvider clientId='638172052069-mn73rt77rrbifi1nerhauor4goti4rqe.apps.googleusercontent.com'>

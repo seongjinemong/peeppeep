@@ -14,8 +14,12 @@ const Feed = () => {
         <div className='w-full h-full flex items-center justify-center'>
           <Spinner />
         </div>
-      ) : (
+      ) : feeds ? (
         feeds.map((item) => <FeedCard key={item._id} feed={item} />)
+      ) : (
+        <div className='w-full h-full flex items-center justify-center'>
+          <p className='text-tertiary'>피드가 없습니다.</p>
+        </div>
       )}
     </div>
   )
