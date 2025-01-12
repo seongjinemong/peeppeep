@@ -274,7 +274,7 @@ class FeedCreateResponse(BaseModel):
 async def create_feed(feed: Feed):
     try:
         print(feed)
-        current_time = Field(default_factory=lambda: MongoDatetime(date=datetime.utcnow()))
+        current_time = {"$date": datetime.utcnow().isoformat() + "Z"}
         feed_dict = feed.dict(by_alias=True)
         feed_dict["created_at"] = current_time
         feed_dict["updated_at"] = current_time
@@ -287,6 +287,7 @@ async def create_feed(feed: Feed):
             body="success"
         )
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/feeds/{feed_id}/comments", response_model=Feed)
